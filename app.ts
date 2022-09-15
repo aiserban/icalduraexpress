@@ -7,6 +7,7 @@ const port = 3000
 
 app.get('/', async (req, res) => {
   await Scraper.getRowCount();
+  await Scraper.parseData();
   res.send('Hello World!')
 })
 
