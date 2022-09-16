@@ -45,22 +45,30 @@ class Scraper {
     }
 
     async splitStreetsAndBlocks(streets: string[]) {
-
-        const result: [[string, string]] = [['','']];
+        const streetBlockTuples: [[string, string]] = [['','']];   // [0]streets, [1] blocks
         for (let i = 0; i < streets.length; i++){
             const tmp = streets[i].split(' - ');
             let tuple: [string, string] = [tmp[0], tmp[1]];
 
-            result.push(tuple);
+            streetBlockTuples.push(tuple);
         }
 
-        result.shift();
-        return result;
+        streetBlockTuples.shift();
+        return streetBlockTuples;
     }
 
     // TODO Split blocks
     // TODO Split road type
-    
+    async splitBlocks(blocks: string) {
+        let allBlocks: string[] = [];
+
+        // bl. 3K, 3F, 8H, 8J, 8G
+        // bl. 8A-2, 8A-3, 2G, 3B, 8C, 2H, 3J, 3I, 8B
+        // bl. 2C, 1H, 1 I, 1G, 2K, 2B, 1F, 10G, 10 H 
+        // bl. 8, 7, 8A, 7A, imob.Nr.65, 41
+        // Turnescu imobil.Nr.9, 15, 13
+        // imob.Nr.19, 15
+    }
 
     async parseData() {
         const rows = await this.getAllRows();
@@ -81,6 +89,7 @@ class Scraper {
 
             const cleanAddresses = await this.cleanupAddresses(addressList);
             const splitStreets = await this.splitStreetsAndBlocks(cleanAddresses);
+            // const 
         })
     }
 }
