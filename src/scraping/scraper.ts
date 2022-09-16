@@ -43,12 +43,15 @@ class Scraper {
     }
 
     async splitStreetsAndBlocks(streets: string[]) {
-        const streetBlockTuples: [[string, string]] = [['', '']];   // [0]streets, [1] blocks
-        for (let i = 0; i < streets.length; i++) {
-            const tmp = streets[i].split(' - ');
-            let tuple: [string, string] = [tmp[0], tmp[1]];
+        const streetBlockTuples: [[string | undefined, string | undefined]] = [['', '']];   // [0]streets, [1] blocks
 
-            streetBlockTuples.push(tuple);
+
+        const reBlocks = /(?:-\s)(.*)$/g
+        const reStreets = /^(•.*)(?:\s-)/g
+        for (let i = 0; i < streets.length; i++) {
+            let blk = streets[i].match(reBlocks)?.join().replace('-','').trim();
+            let st = streets[i].match(reStreets)?.join().replace('-','').trim();
+            streetBlockTuples.push([st, blk]);
         }
 
         streetBlockTuples.shift();

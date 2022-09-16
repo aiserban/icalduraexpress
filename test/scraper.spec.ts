@@ -5,7 +5,7 @@ import { should } from 'chai';  // Using Should style
 
 
 describe('Scrapper tests', () => {
-    it.skip('can split streets from blocks', async function () {
+    it('can split streets from blocks', async function () {
         const data = [
             '• Str Borşa - bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H',
             '• Str N. Constantinescu - bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60',
@@ -23,7 +23,7 @@ describe('Scrapper tests', () => {
         expect(result).to.eql(expected);
     })
 
-    it.skip('can clean up street information', async function () {
+    it('can clean up street information', async function () {
         const data = [
             '• Str Borşa ',
             '• Str N. Constantinescu',
@@ -44,7 +44,7 @@ describe('Scrapper tests', () => {
 
     it('can split blocks from a list', async function () {
         const data = [
-            'bl. 15M, 14D+14E, 15B, 15J, 15K, 15A, 15L, 16H, 16I',
+            'bl. 15M, 14D+14E, 15B, 15J, ARMONIA, 15K, 15A, 15L, 16H, 16I',
             'bl. 2C, 1H, 1 I, 1G, 2K, 2B, 1F, 10G, 10 H ',
             'bl. 8A-2, 8A-3, 2G, 3B, 8C, 2H, 3J, 3I, 8B',
             'bl. 3K, 3F, 8H, 8J, 8G',
@@ -56,7 +56,7 @@ describe('Scrapper tests', () => {
         ]
 
         const expected = [
-            ['15M', '14D', '14E', '15B', '15J', '15K', '15A', '15L', '16H', '16I'],
+            ['15M', '14D', '14E', '15B', '15J', 'ARMONIA', '15K', '15A', '15L', '16H', '16I'],
             ['2C', '1H', '1I', '1G', '2K', '2B', '1F', '10G', '10H'],
             ['8A2', '8A3', '2G', '3B', '8C', '2H', '3J', '3I', '8B'],
             ['3K', '3F', '8H', '8J', '8G'],
@@ -71,6 +71,10 @@ describe('Scrapper tests', () => {
             let result = await Scraper.splitBlocks(data[i]);
             expect(result).to.have.members(expected[i]);
         }
+    })
+
+    it('can get street type', async function(){
+        
     })
 })
 
