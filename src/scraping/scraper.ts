@@ -29,33 +29,60 @@ class Scraper {
         })
     }
 
-    async filterAddresses(dirtyAddressList: string[]): Promise<string[]> {
-        const addresses = [];
+    async filterAddresses(dirtyAddress: string): Promise<string | undefined> {
 
         // if it doesn't start with a bullet point, it's not an address
-        for (let i = 0; i < dirtyAddressList.length; i++) {
-            if (dirtyAddressList[i].startsWith('\u2022')) {     // \u2022 = bullet point
-                const cleanAddress = dirtyAddressList[i].replace('\u2022', '').trim()
-                addresses.push(cleanAddress);
+        if (dirtyAddress.startsWith('\u2022')) {     // \u2022 = bullet point
+            const cleanAddress = dirtyAddress.replace('\u2022', '').trim()
+            return cleanAddress;
+        }
+        return undefined
+    }
+
+
+    // async splitStreetsAndBlocks(street: string[]) {
+    //     const streetBlockTuples: [[string | undefined, string | undefined]] = [['', '']];   // [0]streets, [1] blocks
+
+    //     const reBlocks = /(?:-\s)(.*)$/g
+    //     const reStreets = /^(.*)(?:\s-)/g
+    //     for (let i = 0; i < streets.length; i++) {
+    //         let blk = streets[i].match(reBlocks)?.join().replace('-', '').trim();
+    //         let st = streets[i].match(reStreets)?.join().replace('-', '').trim();
+    //         streetBlockTuples.push([st, blk]);
+    //     }
+
+    //     streetBlockTuples.shift();
+    //     return streetBlockTuples;
+    // }
+
+    async getArrayOfBlocks(address: string) {
+        const re = /(?:-\s)(.*)$/g
+        let blocks = address.match(re)?.join().replace('-', '').trim() || '' // string of blocks
+        
+        let initialArr = blocks.split(','); // non-trimmed
+        let resultArr: string[] = [];
+
+        for (let i = 0; i < initialArr.length; i++) {
+            let str = initialArr[i];
+
+            const re = /((?:(\D|(\d+\s|\.))[^\s\/.\r\n]*))\s?$/g
+            str = str.match(re)?.join()
+                // .replace(/\-/g, '')         // replace all -
+                .replace(/\./g, '')         // replace all .
+                .replace(/\s/g, '') || str  // replace all whitespace
+
+            if (str.includes('+')) {
+                let [a, b] = str.split('+');
+                resultArr.push(a, b);
+            } else if (str.includes('-')) {
+                let [a, b] = str.split('-');
+                resultArr.push(a, b);
+            } else {
+                resultArr.push(str)
             }
         }
 
-        return addresses;
-    }
-
-    async splitStreetsAndBlocks(streets: string[]) {
-        const streetBlockTuples: [[string | undefined, string | undefined]] = [['', '']];   // [0]streets, [1] blocks
-
-        const reBlocks = /(?:-\s)(.*)$/g
-        const reStreets = /^(.*)(?:\s-)/g
-        for (let i = 0; i < streets.length; i++) {
-            let blk = streets[i].match(reBlocks)?.join().replace('-','').trim();
-            let st = streets[i].match(reStreets)?.join().replace('-','').trim();
-            streetBlockTuples.push([st, blk]);
-        }
-
-        streetBlockTuples.shift();
-        return streetBlockTuples;
+        return resultArr;
     }
 
     // TODO Split road type
@@ -69,19 +96,19 @@ class Scraper {
             let str = initialArr[i];
 
             const re = /((?:(\D|(\d+\s|\.))[^\s\/.\r\n]*))\s?$/g
-            str = str.match(re)!.join()
-                    .replace(/\-/g, '')  // replace all -
-                    .replace(/\./g, '')  // replace all .
-                    .replace(/\s/g, '')  // replace all whitespace
+            str = str.match(re)?.join()
+                .replace(/\-/g, '')         // replace all -
+                .replace(/\./g, '')         // replace all .
+                .replace(/\s/g, '') || str  // replace all whitespace
 
             if (str.includes('+')) {
                 let [a, b] = str.split('+');
-                resultArr.push(a,b);
+                resultArr.push(a, b);
             } else {
                 resultArr.push(str);
             }
         }
-        
+
         return resultArr;
     }
 
@@ -115,8 +142,11 @@ class Scraper {
                 }
             });
 
-            const cleanAddresses = await this.filterAddresses(addressList);
-            const splitStreets = await this.splitStreetsAndBlocks(cleanAddresses);
+
+            for (let i = 0; i < addressList.length; i++ ) {
+                const cleanAddress = await this.filterAddresses(addressList[i]);
+                // const splitStreets = await this.getArrayOfBlocks(cleanAddress);
+            }
         })
     }
 }
