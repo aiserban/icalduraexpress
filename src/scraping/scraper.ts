@@ -148,7 +148,8 @@ class Scraper {
                         blocks,
                         issueType,
                         description,
-                        resolutionTime
+                        resolutionTime,
+                        new Date()
                     )
 
                     issueArr.push(issue);

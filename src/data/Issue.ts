@@ -6,6 +6,7 @@ class Issue {
     issueType: string = '';
     description: string = '';
     resolutionTime: string = '';
+    dateAdded: Date = new Date();
 
     constructor(
         district: string,
@@ -14,7 +15,8 @@ class Issue {
         blocks: string[],
         issueType: string,
         description: string,
-        resolutionTime: string
+        resolutionTime: string,
+        dateAdded: Date
     ) {
         this.district = district,
         this.roadType = roadType;
@@ -23,6 +25,7 @@ class Issue {
         this.issueType = issueType;
         this.description = description;
         this.resolutionTime = resolutionTime;
+        this.dateAdded = dateAdded;
     }
 }
 
