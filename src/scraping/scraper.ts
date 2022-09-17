@@ -1,4 +1,6 @@
 import { JSDOM } from 'jsdom';
+import Issue from '../data/Issue';
+var unidecode = require('unidecode')
 
 class Scraper {
     url = 'https://www.cmteb.ro/functionare_sistem_termoficare.php';
@@ -29,12 +31,11 @@ class Scraper {
         })
     }
 
-    async filterAddresses(dirtyAddress: string): Promise<string | undefined> {
+    async filterAddresses(address: string): Promise<string | undefined> {
+        address = unidecode(address);
 
-        // if it doesn't start with a bullet point, it's not an address
-        if (dirtyAddress.startsWith('\u2022')) {     // \u2022 = bullet point
-            const cleanAddress = dirtyAddress.replace('\u2022', '').trim()
-            return cleanAddress;
+        if (address.startsWith('*')) {        // if it doesn't start with a * , it's not an address
+            return address.replace('*', '').trim();
         }
         return undefined
     }
@@ -55,10 +56,19 @@ class Scraper {
     //     return streetBlockTuples;
     // }
 
+    async getStreetName(address: string): Promise<string | undefined> {
+        address = unidecode(address);
+
+        const re = /(\s.+)(?:\s-\s)/g
+        return address.match(re)?.join().trim().replaceAll('-', '').trim();
+    }
+
     async getArrayOfBlocks(address: string) {
+        address = unidecode(address);
+
         const re = /(?:-\s)(.*)$/g
         let blocks = address.match(re)?.join().replace('-', '').trim() || '' // string of blocks
-        
+
         let initialArr = blocks.split(','); // non-trimmed
         let resultArr: string[] = [];
 
@@ -85,33 +95,6 @@ class Scraper {
         return resultArr;
     }
 
-    // TODO Split road type
-    async splitBlocks(blocks: string): Promise<string[]> {
-        let allBlocks: string[] = [];
-
-        let initialArr = blocks.split(','); // non-trimmed
-        let resultArr: string[] = [];
-
-        for (let i = 0; i < initialArr.length; i++) {
-            let str = initialArr[i];
-
-            const re = /((?:(\D|(\d+\s|\.))[^\s\/.\r\n]*))\s?$/g
-            str = str.match(re)?.join()
-                .replace(/\-/g, '')         // replace all -
-                .replace(/\./g, '')         // replace all .
-                .replace(/\s/g, '') || str  // replace all whitespace
-
-            if (str.includes('+')) {
-                let [a, b] = str.split('+');
-                resultArr.push(a, b);
-            } else {
-                resultArr.push(str);
-            }
-        }
-
-        return resultArr;
-    }
-
 
     /**
      * Pass a street with a road type and get the road type back
@@ -119,35 +102,62 @@ class Scraper {
      * @returns road type or undefined
      */
     async getRoadType(street: string): Promise<string | undefined> {
-        const re = /^([^\s]+)/g
+        street = unidecode(street)
+
+        // const re = /^([^\s]+)/g
+        const re = /^(?:•|\s|)(?:\s+|)(\w+-?\w+)/g
 
         const res = street.match(re)?.join();
         return res;
     }
 
+
+    /**
+     * Where the magic happens
+     */
     async parseData() {
         const rows = await this.getAllRows();
-        let data = [];
+        const issueArr: Issue[] = [];
 
-        rows.forEach(async (row) => {
-            const district = row.querySelector('td:nth-of-type(1)')?.textContent;
-            const issueType = row.querySelector('td:nth-of-type(3)')?.textContent;
-            const issueDescription = row.querySelector('td:nth-of-type(4)')?.textContent;
-            const resolutionTime = row.querySelector('td:nth-of-type(5)')?.textContent;
+        for (let i = 0; i < rows.length; i++) {
+            const district = rows[i].querySelector('td:nth-of-type(1)')?.textContent || '';
+            const issueType = rows[i].querySelector('td:nth-of-type(3)')?.textContent || '';
+            const description = rows[i].querySelector('td:nth-of-type(4)')?.textContent || '';
+            const resolutionTime = rows[i].querySelector('td:nth-of-type(5)')?.textContent || '';
 
             const addressList: string[] = [];
-            row.querySelector('td:nth-of-type(2)')?.childNodes.forEach((child) => {     // streets and blocks
+            rows[i].querySelector('td:nth-of-type(2)')?.childNodes.forEach((child) => {     // streets and blocks
                 if (child.textContent !== null) {
-                    addressList.push(child.textContent);
+                    addressList.push(unidecode(child.textContent));
                 }
             });
 
 
-            for (let i = 0; i < addressList.length; i++ ) {
+            for (let i = 0; i < addressList.length; i++) {
                 const cleanAddress = await this.filterAddresses(addressList[i]);
-                // const splitStreets = await this.getArrayOfBlocks(cleanAddress);
+
+                if (cleanAddress) {
+                    const blocks = await this.getArrayOfBlocks(cleanAddress) || '';
+                    const street = await this.getStreetName(cleanAddress) || '';
+                    const roadType = await this.getRoadType(cleanAddress) || '';
+
+                    const issue = new Issue(
+                        district,
+                        roadType,
+                        street,
+                        blocks,
+                        issueType,
+                        description,
+                        resolutionTime
+                    )
+
+                    issueArr.push(issue);
+                }
+
             }
-        })
+        }
+
+        return issueArr;
     }
 }
 

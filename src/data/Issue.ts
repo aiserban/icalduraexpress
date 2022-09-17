@@ -1,27 +1,29 @@
 class Issue {
-    district: number = 0;
-    streetType: string = '';
+    district: string = '';
+    roadType: string = '';
     street: string = '';
-    block: string = '';
+    blocks: string[] = [];
     issueType: string = '';
     description: string = '';
-    resolutionTime: Date = new Date();
+    resolutionTime: string = '';
 
     constructor(
-        district: number,
-        streetType: string,
+        district: string,
+        roadType: string,
         street: string,
-        block: string,
+        blocks: string[],
         issueType: string,
         description: string,
-        resolutionTime: Date
+        resolutionTime: string
     ) {
         this.district = district,
-        this.streetType = streetType;
+        this.roadType = roadType;
         this.street = street;
-        this.block = block;
+        this.blocks = blocks;
         this.issueType = issueType;
         this.description = description;
         this.resolutionTime = resolutionTime;
     }
 }
+
+export default Issue;

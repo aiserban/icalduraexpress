@@ -1,10 +1,14 @@
 import Scraper from '../src/scraping/scraper'
-import { assert } from 'chai';  // Using Assert style
 import { expect } from 'chai';  // Using Expect style
-import { should } from 'chai';  // Using Should style
+var unidecode = require('unidecode')
 
 
 describe('Scrapper tests', () => {
+    const decode = function(data: string[]) {
+        for (let i = 0; i < data.length; i++){
+            data[i] = unidecode(data[i]);
+        }
+    }
 
     it('can filter addresses', async function () {
         const data = [
@@ -13,8 +17,10 @@ describe('Scrapper tests', () => {
             '• Bld Prof.dr. Gheorghe Marinescu '
         ]
 
+        decode(data);
+
         const expected = [
-            'Str Borşa',
+            'Str Borsa',
             'Str N. Constantinescu',
             'Bld Prof.dr. Gheorghe Marinescu'
         ]
@@ -26,25 +32,6 @@ describe('Scrapper tests', () => {
     })
 
 
-    // it('can split streets from blocks', async function () {
-    //     const data = [
-    //         'Str Borşa - bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H',
-    //         'Str N. Constantinescu - bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60',
-    //         'Bld Prof.dr. Gheorghe Marinescu - imob.Nr.19, 15'
-    //     ]
-
-    //     const expected = [
-    //         ['Str Borşa', 'bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H'],
-    //         ['Str N. Constantinescu', 'bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60'],
-    //         ['Bld Prof.dr. Gheorghe Marinescu', 'imob.Nr.19, 15']
-    //     ]
-    //     const actual = await Scraper.splitStreetsAndBlocks(data);
-
-    //     expect(actual).to.be.an('array').and.have.lengthOf(3);
-    //     expect(actual).to.eql(expected);
-    // })
-
-
     it('can get blocks from a list', async function () {
         const data = [
             'Bld Prof.dr. Gheorghe Marinescu - imob.Nr.10, 1',
@@ -54,8 +41,9 @@ describe('Scrapper tests', () => {
             '• Str Căpâlna - bl. 15M, 14D+14E, 15B, 15J, 15K, 15A, 15L, 16H, 16I'
         ]
 
+        decode(data);
+
         const expected = [
-            // ['20', '2'],
             ['10','1'],
             ['17A', '17B', '18A', '19A', '19B', '19F', '19G'],
             ['11I', '12J', '12K', '13M', '13N'],
@@ -76,15 +64,19 @@ describe('Scrapper tests', () => {
             'Cal Dorobanţilor',
             'Str George Enescu',
             'Şos Viilor',
+            'Str G-ral Stefan Burileanu - bl. 11I, 12J, 12K, 13M, 13N',
             ''
         ]
+
+        decode(data);
 
         const expected = [
             'Bld',
             'Str',
             'Cal',
             'Str',
-            'Şos',
+            'Sos',
+            'Str',
             undefined
         ]
 
