@@ -5,23 +5,6 @@ import { should } from 'chai';  // Using Should style
 
 
 describe('Scrapper tests', () => {
-    it('can split streets from blocks', async function () {
-        const data = [
-            'Str Borşa - bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H',
-            'Str N. Constantinescu - bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60',
-            'Bld Prof.dr. Gheorghe Marinescu - imob.Nr.19, 15'
-        ]
-
-        const expected = [
-            ['Str Borşa', 'bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H'],
-            ['Str N. Constantinescu', 'bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60'],
-            ['Bld Prof.dr. Gheorghe Marinescu', 'imob.Nr.19, 15']
-        ]
-        const result = await Scraper.splitStreetsAndBlocks(data);
-
-        expect(result).to.be.an('array').and.have.lengthOf(3);
-        expect(result).to.eql(expected);
-    })
 
     it('can filter addresses', async function () {
         const data = [
@@ -36,11 +19,31 @@ describe('Scrapper tests', () => {
             'Bld Prof.dr. Gheorghe Marinescu'
         ]
 
-        const result = await Scraper.filterAddresses(data);
+        const actual = await Scraper.filterAddresses(data);
 
-        expect(result).to.be.an('array').and.have.lengthOf(3);
-        expect(result).to.eql(expected);
+        expect(actual).to.be.an('array').and.have.lengthOf(3);
+        expect(actual).to.eql(expected);
     })
+
+
+    it('can split streets from blocks', async function () {
+        const data = [
+            'Str Borşa - bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H',
+            'Str N. Constantinescu - bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60',
+            'Bld Prof.dr. Gheorghe Marinescu - imob.Nr.19, 15'
+        ]
+
+        const expected = [
+            ['Str Borşa', 'bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H'],
+            ['Str N. Constantinescu', 'bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60'],
+            ['Bld Prof.dr. Gheorghe Marinescu', 'imob.Nr.19, 15']
+        ]
+        const actual = await Scraper.splitStreetsAndBlocks(data);
+
+        expect(actual).to.be.an('array').and.have.lengthOf(3);
+        expect(actual).to.eql(expected);
+    })
+
 
     it('can split blocks from a list', async function () {
         const data = [
@@ -68,13 +71,34 @@ describe('Scrapper tests', () => {
         ]
 
         for (let i = 0; i < data.length; i++) {
-            let result = await Scraper.splitBlocks(data[i]);
-            expect(result).to.have.members(expected[i]);
+            let actual = await Scraper.splitBlocks(data[i]);
+            expect(actual).to.have.members(expected[i]);
         }
     })
 
-    it('can get street type', async function(){
-        
+    it('can get street type', async function () {
+        const data = [
+            'Bld G-ral Gheorghe Magheru',
+            'Str N. Constantinescu',
+            'Cal Dorobanţilor',
+            'Str George Enescu',
+            'Şos Viilor',
+            ''
+        ]
+
+        const expected = [
+            'Bld',
+            'Str',
+            'Cal',
+            'Str',
+            'Şos',
+            undefined
+        ]
+
+        for (let i = 0; i < data.length; i++) {
+            const actual = await Scraper.getRoadType(data[i]);
+            expect(actual).to.eql(expected[i]);
+        }
     })
 })
 

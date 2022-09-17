@@ -85,6 +85,19 @@ class Scraper {
         return resultArr;
     }
 
+
+    /**
+     * Pass a street with a road type and get the road type back
+     * @param street format should be "Sos Viilor [...]"
+     * @returns road type or undefined
+     */
+    async getRoadType(street: string): Promise<string | undefined> {
+        const re = /^([^\s]+)/g
+
+        const res = street.match(re)?.join();
+        return res;
+    }
+
     async parseData() {
         const rows = await this.getAllRows();
         let data = [];
