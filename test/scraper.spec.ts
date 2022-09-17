@@ -1,4 +1,4 @@
-import Scraper from '../src/scraping/scraper.js'
+import Scraper from '../src/scraping/scraper'
 import { assert } from 'chai';  // Using Assert style
 import { expect } from 'chai';  // Using Expect style
 import { should } from 'chai';  // Using Should style
@@ -7,15 +7,15 @@ import { should } from 'chai';  // Using Should style
 describe('Scrapper tests', () => {
     it('can split streets from blocks', async function () {
         const data = [
-            '• Str Borşa - bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H',
-            '• Str N. Constantinescu - bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60',
-            '• Bld Prof.dr. Gheorghe Marinescu - imob.Nr.19, 15'
+            'Str Borşa - bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H',
+            'Str N. Constantinescu - bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60',
+            'Bld Prof.dr. Gheorghe Marinescu - imob.Nr.19, 15'
         ]
 
         const expected = [
-            ['• Str Borşa', 'bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H'],
-            ['• Str N. Constantinescu', 'bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60'],
-            ['• Bld Prof.dr. Gheorghe Marinescu', 'imob.Nr.19, 15']
+            ['Str Borşa', 'bl. 5F, 4F, 4G, 4E, 7G, ARMONIA, 7B, 7A, 7H'],
+            ['Str N. Constantinescu', 'bl. 15A, 14, 14A, 16, 16A, 13, 15, imob.Nr.60'],
+            ['Bld Prof.dr. Gheorghe Marinescu', 'imob.Nr.19, 15']
         ]
         const result = await Scraper.splitStreetsAndBlocks(data);
 
@@ -23,7 +23,7 @@ describe('Scrapper tests', () => {
         expect(result).to.eql(expected);
     })
 
-    it('can clean up street information', async function () {
+    it('can filter addresses', async function () {
         const data = [
             '• Str Borşa ',
             '• Str N. Constantinescu',
@@ -36,7 +36,7 @@ describe('Scrapper tests', () => {
             'Bld Prof.dr. Gheorghe Marinescu'
         ]
 
-        const result = await Scraper.cleanupStreetNames(data);
+        const result = await Scraper.filterAddresses(data);
 
         expect(result).to.be.an('array').and.have.lengthOf(3);
         expect(result).to.eql(expected);

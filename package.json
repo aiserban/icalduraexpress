@@ -5,7 +5,7 @@
   "main": "app.ts",
   "live": "nodemon app.ts",
   "scripts": {
-    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"ES2015\" }' mocha -r ts-node/register 'test/*.ts'"
+    "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/*.ts'"
   },
   "author": "",
   "license": "ISC",
@@ -21,7 +21,7 @@
     "@types/mocha": "^9.1.1",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
+    "ts-mocha": "^10.0.0",
     "typescript": "^4.8.3"
-  },
-  "type": "module"
+  }
 }

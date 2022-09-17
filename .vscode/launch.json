@@ -16,9 +16,19 @@
                 "<node_internals>/**"
             ],
             "type": "node"
+        },
+        {
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "request": "launch",
+            "name": "ts-mocha",
+            "runtimeExecutable": "npx",
+            "runtimeArgs": [
+                "ts-mocha",
+                "-p tsconfig.json test/*.spec.ts"
+            ],
+            "type": "node",
+            "autoAttachChildProcesses": true
         }
-        
-        
-
     ]
 }

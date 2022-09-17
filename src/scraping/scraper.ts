@@ -29,13 +29,14 @@ class Scraper {
         })
     }
 
-    async cleanupStreetNames(dirtyAddressList: string[]): Promise<string[]> {
+    async filterAddresses(dirtyAddressList: string[]): Promise<string[]> {
         const addresses = [];
 
         // if it doesn't start with a bullet point, it's not an address
         for (let i = 0; i < dirtyAddressList.length; i++) {
             if (dirtyAddressList[i].startsWith('\u2022')) {     // \u2022 = bullet point
-                addresses.push(dirtyAddressList[i].replace('\u2022', '').trim());
+                const cleanAddress = dirtyAddressList[i].replace('\u2022', '').trim()
+                addresses.push(cleanAddress);
             }
         }
 
@@ -45,9 +46,8 @@ class Scraper {
     async splitStreetsAndBlocks(streets: string[]) {
         const streetBlockTuples: [[string | undefined, string | undefined]] = [['', '']];   // [0]streets, [1] blocks
 
-
         const reBlocks = /(?:-\s)(.*)$/g
-        const reStreets = /^(•.*)(?:\s-)/g
+        const reStreets = /^(.*)(?:\s-)/g
         for (let i = 0; i < streets.length; i++) {
             let blk = streets[i].match(reBlocks)?.join().replace('-','').trim();
             let st = streets[i].match(reStreets)?.join().replace('-','').trim();
@@ -96,15 +96,14 @@ class Scraper {
             const resolutionTime = row.querySelector('td:nth-of-type(5)')?.textContent;
 
             const addressList: string[] = [];
-            row.querySelector('td:nth-of-type(2)')?.childNodes.forEach((child) => {
+            row.querySelector('td:nth-of-type(2)')?.childNodes.forEach((child) => {     // streets and blocks
                 if (child.textContent !== null) {
                     addressList.push(child.textContent);
                 }
             });
 
-            const cleanAddresses = await this.cleanupStreetNames(addressList);
+            const cleanAddresses = await this.filterAddresses(addressList);
             const splitStreets = await this.splitStreetsAndBlocks(cleanAddresses);
-            // const 
         })
     }
 }
