@@ -11,8 +11,7 @@ class Db {
                 $gte: startOfDay(issue.dateAdded),
                 $lte: endOfDay(issue.dateAdded)
             },
-            blocks: issue.blocks,
-            issueType: issue.issueType
+            blocks: issue.blocks
         }).then((results) => {
             if (results.length === 0) {
                 let newIssue = new IssueModel(issue);
@@ -23,7 +22,7 @@ class Db {
 
     async clearDb(){
         await IssueModel.deleteMany({});
-        console.log('--- CLEARED DOWN DATABASE ---');
+        console.log('--- DATABASE CLEARED ---');
     }
 }
 

@@ -50,9 +50,6 @@ class Scraper {
         return address.match(re)?.join().trim().replaceAll('-', '').trim();
     }
 
-
-    // TODO • Şos Pantelimon - bl. 52, 61, 68, 65, 69A, 62, 51, 67, *** 69P+6 ***
-    // • Str Gen. Andrei Popovici - bl. 6, 1+1B << this will get broken
     async getArrayOfBlocks(address: string) {
         address = unidecode(address);
 
@@ -60,20 +57,35 @@ class Scraper {
         let blocks = address.match(re)?.join().replace('-', '').trim() || '' // string of blocks
 
         let initialArr = blocks.split(','); // non-trimmed
+
+        // If split with semicolons ; split them again
+        for (let i = 0; i < initialArr.length; i++) {
+            if (initialArr[i].includes(';')) {
+                const split = initialArr[i].split(';');
+                initialArr.splice(i, 1, ...split);
+            }
+        }
+
         let resultArr: string[] = [];
 
         for (let i = 0; i < initialArr.length; i++) {
             let str = initialArr[i];    // bl.25 OR M20 OR 2C etc
 
+            // Remove entrance data if it exists; we need to assume everything after 'sc.' is entrance no
+            const index = str.indexOf('sc.');
+            if (index !== -1) {
+                str = str.slice(0, index).trim();
+            }
+
             if (str.includes('-')) {    // could be a range...
-                if (str.toLowerCase().includes('bl.') || str.toLowerCase().includes('nr.')){
+                if (str.toLowerCase().includes('bl.') || str.toLowerCase().includes('nr.')) {
                     str = str.replace('bl.', '').replace('nr.', '').trim();
                 }
 
                 const [leftSide, rightSide] = str.trim().split('-');
                 if (Number(leftSide) && Number(rightSide)) {    // we can assume it's a range of blocks
                     getNumbersInRange(Number.parseInt(leftSide), Number.parseInt(rightSide))
-                                        .map((int) => initialArr.push(int.toString()));
+                        .map((int) => initialArr.push(int.toString()));
                     continue;
                 }
             }
@@ -84,15 +96,16 @@ class Scraper {
                 .replace(/\./g, '')         // replace all .
                 .replace(/\s/g, '') || str  // replace all whitespace
 
-            if (str.includes('+')) {
-                let [a, b] = str.split('+');
-                resultArr.push(a, b);
-            } else if (str.includes('-')) {
-                let [a, b] = str.split('-');
-                resultArr.push(a, b);
-            } else {
-                resultArr.push(str)
-            }
+            // if (str.includes('+')) {
+            //     let [a, b] = str.split('+');
+            //     resultArr.push(a, b);
+            // } else 
+            // if (str.includes('-')) {
+            //     let [a, b] = str.split('-');
+            //     resultArr.push(a, b);
+            // } else {
+            resultArr.push(str)
+            // }
         }
 
         return resultArr;
