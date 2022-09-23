@@ -5,7 +5,7 @@ class Issue {
     blocks: string[] = [];
     issueType: string = '';
     description: string = '';
-    resolutionTime: string = '';
+    resolutionTime: Date = new Date();
     dateAdded: Date = new Date();
 
     constructor(
@@ -15,7 +15,7 @@ class Issue {
         blocks: string[],
         issueType: string,
         description: string,
-        resolutionTime: string,
+        resolutionTime: Date,
         dateAdded: Date
     ) {
         this.district = district,

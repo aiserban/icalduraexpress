@@ -1,4 +1,4 @@
-import mongoose, { Model } from "mongoose";
+import mongoose from "mongoose";
 
 
 const issueSchema = new mongoose.Schema({
@@ -8,7 +8,7 @@ const issueSchema = new mongoose.Schema({
     blocks: Array,
     issueType: String,
     description: String,
-    resolutionTime: String,
+    resolutionTime: Date,
     dateAdded: Date
 })
 

@@ -1,5 +1,7 @@
 import { JSDOM } from 'jsdom';
 import Issue from '../data/Issue';
+import { parse } from 'date-fns';
+import { getNumbersInRange } from '../helpers';
 var unidecode = require('unidecode')
 
 class Scraper {
@@ -23,6 +25,7 @@ class Scraper {
         })
     }
 
+
     // Get all rows
     async getAllRows() {
         return await this.dom.then(async (dom) => {
@@ -39,22 +42,6 @@ class Scraper {
         }
         return undefined
     }
-
-
-    // async splitStreetsAndBlocks(street: string[]) {
-    //     const streetBlockTuples: [[string | undefined, string | undefined]] = [['', '']];   // [0]streets, [1] blocks
-
-    //     const reBlocks = /(?:-\s)(.*)$/g
-    //     const reStreets = /^(.*)(?:\s-)/g
-    //     for (let i = 0; i < streets.length; i++) {
-    //         let blk = streets[i].match(reBlocks)?.join().replace('-', '').trim();
-    //         let st = streets[i].match(reStreets)?.join().replace('-', '').trim();
-    //         streetBlockTuples.push([st, blk]);
-    //     }
-
-    //     streetBlockTuples.shift();
-    //     return streetBlockTuples;
-    // }
 
     async getStreetName(address: string): Promise<string | undefined> {
         address = unidecode(address);
@@ -73,7 +60,20 @@ class Scraper {
         let resultArr: string[] = [];
 
         for (let i = 0; i < initialArr.length; i++) {
-            let str = initialArr[i];
+            let str = initialArr[i];    // bl.25 OR M20 OR 2C etc
+
+            if (str.includes('-')) {    // could be a range...
+                if (str.toLowerCase().includes('bl.') || str.toLowerCase().includes('nr.')){
+                    str = str.replace('bl.', '').replace('nr.', '').trim();
+                }
+
+                const [leftSide, rightSide] = str.trim().split('-');
+                if (Number(leftSide) && Number(rightSide)) {    // we can assume it's a range of blocks
+                    getNumbersInRange(Number.parseInt(leftSide), Number.parseInt(rightSide))
+                                        .map((int) => initialArr.push(int.toString()));
+                    continue;
+                }
+            }
 
             const re = /((?:(\D|(\d+\s|\.))[^\s\/.\r\n]*))\s?$/g
             str = str.match(re)?.join()
@@ -116,14 +116,15 @@ class Scraper {
      * Where the magic happens
      */
     async parseData() {
+        this.dom = JSDOM.fromURL(this.url);
         const rows = await this.getAllRows();
         const issueArr: Issue[] = [];
 
         for (let i = 0; i < rows.length; i++) {
             const district = rows[i].querySelector('td:nth-of-type(1)')?.textContent || '';
-            const issueType = rows[i].querySelector('td:nth-of-type(3)')?.textContent || '';
-            const description = rows[i].querySelector('td:nth-of-type(4)')?.textContent || '';
-            const resolutionTime = rows[i].querySelector('td:nth-of-type(5)')?.textContent || '';
+            const issueType = unidecode(rows[i].querySelector('td:nth-of-type(3)')?.textContent || '');
+            const description = unidecode(rows[i].querySelector('td:nth-of-type(4)')?.textContent || '');
+            const resolutionTime = parse(rows[i].querySelector('td:nth-of-type(5)')?.textContent || '', "dd.MM.yyyy HH:mm", new Date());
 
             const addressList: string[] = [];
             rows[i].querySelector('td:nth-of-type(2)')?.childNodes.forEach((child) => {     // streets and blocks
