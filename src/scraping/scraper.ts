@@ -50,6 +50,9 @@ class Scraper {
         return address.match(re)?.join().trim().replaceAll('-', '').trim();
     }
 
+
+    // TODO • Şos Pantelimon - bl. 52, 61, 68, 65, 69A, 62, 51, 67, *** 69P+6 ***
+    // • Str Gen. Andrei Popovici - bl. 6, 1+1B << this will get broken
     async getArrayOfBlocks(address: string) {
         address = unidecode(address);
 
