@@ -10,13 +10,10 @@ Db.connect().then(() => {
   startJobs();
 })
 
-app.get('/', async (req, res) => {
-  let result = await Scraper.scrapData();
-  let str = '';
 
-  for (let i = 0; i < result.length; i++) {
-    await Db.addIfNotExists(result[i]);
-  }
+
+app.get('/', async (req, res) => {
+  let str = '';
 
   await Db.findMany({}).then((results) => {
     for (let i = 0; i < results.length; i++) {
