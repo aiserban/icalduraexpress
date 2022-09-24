@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 import Issue from '../data/Issue';
 import { parse } from 'date-fns';
-import { getNumbersInRange } from '../helpers';
+import { getNumbersInRange } from '../utils';
 var unidecode = require('unidecode')
 
 class Scraper {
@@ -131,7 +131,7 @@ class Scraper {
     /**
      * Where the magic happens
      */
-    async parseData() {
+    async scrapData() {
         this.dom = JSDOM.fromURL(this.url);
         const rows = await this.getAllRows();
         const issueArr: Issue[] = [];

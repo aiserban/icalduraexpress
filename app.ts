@@ -1,15 +1,17 @@
 import express from 'express'
 import Scraper from './src/scraping/scraper'
-import mongoose from 'mongoose'
 import Db from './src/db/db'
+import { startJobs } from './src/scheduler'
 
 const app = express()
 const port = 3000
 
-Db.connect();
+Db.connect().then(() => {
+  startJobs();
+})
 
 app.get('/', async (req, res) => {
-  let result = await Scraper.parseData();
+  let result = await Scraper.scrapData();
   let str = '';
 
   for (let i = 0; i < result.length; i++) {
@@ -22,7 +24,7 @@ app.get('/', async (req, res) => {
     }
   })
 
-  res.send('Hello World! <br>'+str)
+  res.send('Hello World! <br>' + str)
 })
 
 app.listen(port, () => {
