@@ -14,12 +14,12 @@ export interface IIssue {
 export const issueSchema = new mongoose.Schema<IIssue>({
     district: { type: String },
     roadType: { type: String },
-    street: { type: String },
+    street: { type: String, index: 'text' },
     blocks: { type: [String] },
     issueType: { type: String },
     description: { type: String },
     resolutionTime: { type: Date },
     dateAdded: { type: Date }
-})
+}, { collection: 'issues' })
 
 export const IssueModel = mongoose.model<IIssue>('IssueModel', issueSchema);
