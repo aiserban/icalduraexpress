@@ -1,10 +1,21 @@
 import Issue from "../data/Issue";
-import { IssueModel } from "./schemas/issueSchema";
-import {startOfDay, endOfDay} from 'date-fns';
+import { IIssue, IssueModel, issueSchema } from "./schemas/issueSchema";
+import { startOfDay, endOfDay } from 'date-fns';
+import mongoose, { Mongoose, Document } from "mongoose";
 
 class Db {
-    saveIfNotExist(issue: Issue) {
-        IssueModel.find({
+    async connect() {
+        await mongoose.connect('mongodb://localhost:27017/icaldura')
+            .then(() => {
+                console.log('--- DATABASE CONNECTED ---')
+            })
+            .catch((err) => {
+                console.log(`--- ISSUES CONNECTING ---\n${err}`);
+            })
+    }
+
+    async addIfNotExists(issue: Issue) {
+        await IssueModel.find({
             district: issue.district,
             street: issue.street,
             dateAdded: {
@@ -18,9 +29,24 @@ class Db {
                 newIssue.save()
             }
         })
+
+        IssueModel.find().then((res) => {
+
+        });
     }
 
-    async clearDb(){
+    async findMany(query: {}): Promise<(mongoose.Document<unknown, any, IIssue> & IIssue & {
+        _id: mongoose.Types.ObjectId;
+    })[]> {
+        return IssueModel.find({}).then((results) => {
+            return results;
+        })
+        // .catch((err) => {
+        //     console.log(`--- Unable to find data. Error ${err} ---`);
+        // })
+    }
+
+    async clearDb() {
         await IssueModel.deleteMany({});
         console.log('--- DATABASE CLEARED ---');
     }
