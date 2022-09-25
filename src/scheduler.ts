@@ -12,7 +12,7 @@ const fetchDataTask = new AsyncTask(
                 Db.addIfNotExists(data[i]);
             }
         }).then(() => {
-            console.log("Job executed");
+            console.log('Job executed successully at', new Date().toISOString());
         })
     }
 )
