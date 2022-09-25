@@ -1,0 +1,5 @@
+// Count blocks
+
+db.issues.aggregate(
+    { $group: { _id: null, 'Count': { $sum: { $size: "$blocks" } } }}
+)

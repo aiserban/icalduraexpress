@@ -1,6 +1,6 @@
 import { JSDOM } from 'jsdom';
 import Issue from '../data/Issue';
-import { parse } from 'date-fns';
+import { add, parse } from 'date-fns';
 import { getNumbersInRange } from '../utils';
 var unidecode = require('unidecode')
 
@@ -46,8 +46,9 @@ class Scraper {
     async getStreetName(address: string): Promise<string | undefined> {
         address = unidecode(address);
 
-        const re = /(\s.+)(?:\s-\s)/g
-        return address.match(re)?.join().trim().replaceAll('-', '').trim();
+        const re = /(\s.+)(?:\s-)/g
+        const result = address.match(re)?.join().trim().replaceAll('-', '').trim();
+        return result;
     }
 
     async getArrayOfBlocks(address: string) {
