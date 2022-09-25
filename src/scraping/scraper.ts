@@ -69,7 +69,7 @@ class Scraper {
         for (let i = 0; i < blocksArray.length; i++) {
             let str = blocksArray[i];    // bl.25 OR M20 OR 2C etc
 
-            const institutions = ['gradinita', 'scoala', 'liceu', 'facultate', 'colegiu', 'gimnaziu', 'cresa'];
+            const institutions = ['gradinita', 'scoala', 'liceu', 'facultate', 'colegiu', 'gimnaziu', 'cresa', 'policlinica', 'spital', 'biserica'];
             const isInstitution = institutions.some(elem => {
                 if (str.trim().toLocaleLowerCase().includes(elem)) {
                     return true;
@@ -86,18 +86,22 @@ class Scraper {
                 }
 
                 // Remove bl. - assume bl. is at the beginning
-                const indexBl = str.toLocaleLowerCase().indexOf('bl.');
-                if (indexBl !== -1) {
-                    str = str.slice(indexBl + 3);
+                if (str.toLocaleLowerCase().startsWith('bl.')) {
+                    str = str.replace('bl.', '');
+                } else if (str.toLocaleLowerCase().startsWith('bl')) {
+                    str = str.replace('bl', '')
                 }
 
                 // Remove nr. - assume nr. is at the beginning
-                const indexNr = str.toLocaleLowerCase().indexOf('nr.');
-                if (indexNr !== -1) {
-                    str = str.slice(indexNr + 3);
-                }
+                // const indexNr = str.toLocaleLowerCase().indexOf('nr.');
+                // if (indexNr !== -1) {
+                //     str = str.slice(indexNr + 3);
+                // }
             }
-            resultArr.push(str.trim());
+
+            if (str !== '') {
+                resultArr.push(str.trim());
+            }
         }
 
         return resultArr;
