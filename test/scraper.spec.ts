@@ -38,7 +38,9 @@ describe('Scrapper tests', () => {
             'Str Cpt. Alexandru Şerbănescu - bl. 17A, 17B, 18A, 19A, 19B, 19F, 19G',
             'Str G-ral Ştefan Burileanu - bl. 11I, 12J, 12K, 13M, 13N',
             '• Str Cpt. Alexandru Şerbănescu - bl. 14B, SERBANESCU 12-14, 14C, 16A, 16C',
-            '• Str Căpâlna - bl. 15M, 14D+14E, 15B, 15J, 15K, 15A, 15L, 16H, 16I'
+            '• Str Căpâlna - bl. 15M, 14D+14E, 15B, 15J, 15K, 15A, 15L, 16H, 16I',
+            '• Ale Ilia - bl. 56; Pelican; 58C; 58A; 57 sc.2',
+            '• Str Smaranda Brăescu - bl. 20H, 20F, 21 I, 21G, 22D, 21F'
         ]
 
         decode(data);
@@ -48,7 +50,9 @@ describe('Scrapper tests', () => {
             ['17A', '17B', '18A', '19A', '19B', '19F', '19G'],
             ['11I', '12J', '12K', '13M', '13N'],
             ['14B', '12-14', '14C', '16A', '16C'],
-            ['15M', '14D+14E', '15B', '15J', '15K', '15A', '15L', '16H', '16I']
+            ['15M', '14D+14E', '15B', '15J', '15K', '15A', '15L', '16H', '16I'],
+            ['56', 'Pelican', '58C', '58A', '57'],
+            ['20H', '20F', '21I', '21G', '22D', '21F']
         ]
 
         for (let i = 0; i < data.length; i++) {

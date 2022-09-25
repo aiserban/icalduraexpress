@@ -77,18 +77,18 @@ class Scraper {
                 str = str.slice(0, index).trim();
             }
 
-            if (str.includes('-')) {    // could be a range...
-                if (str.toLowerCase().includes('bl.') || str.toLowerCase().includes('nr.')) {
-                    str = str.replace('bl.', '').replace('nr.', '').trim();
-                }
+            // if (str.includes('-')) {    // could be a range...
+            //     if (str.toLowerCase().includes('bl.') || str.toLowerCase().includes('nr.')) {
+            //         str = str.replace('bl.', '').replace('nr.', '').trim();
+            //     }
 
-                const [leftSide, rightSide] = str.trim().split('-');
-                if (Number(leftSide) && Number(rightSide)) {    // we can assume it's a range of blocks
-                    getNumbersInRange(Number.parseInt(leftSide), Number.parseInt(rightSide))
-                        .map((int) => initialArr.push(int.toString()));
-                    continue;
-                }
-            }
+            //     const [leftSide, rightSide] = str.trim().split('-');
+            //     if (Number(leftSide) && Number(rightSide)) {    // we can assume it's a range of blocks
+            //         getNumbersInRange(Number.parseInt(leftSide), Number.parseInt(rightSide))
+            //             .map((int) => initialArr.push(int.toString()));
+            //         continue;
+            //     }
+            // }
 
             const re = /((?:(\D|(\d+\s|\.))[^\s\/.\r\n]*))\s?$/g
             str = str.match(re)?.join()
