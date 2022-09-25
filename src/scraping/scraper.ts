@@ -55,57 +55,49 @@ class Scraper {
 
         const re = /(?:-\s)(.*)$/g
         let blocks = address.match(re)?.join().replace('-', '').trim() || '' // string of blocks
-
-        let initialArr = blocks.split(','); // non-trimmed
+        let blocksArray = blocks.split(','); // non-trimmed
 
         // If split with semicolons ; split them again
-        for (let i = 0; i < initialArr.length; i++) {
-            if (initialArr[i].includes(';')) {
-                const split = initialArr[i].split(';');
-                initialArr.splice(i, 1, ...split);
+        for (let i = 0; i < blocksArray.length; i++) {
+            if (blocksArray[i].includes(';')) {
+                const split = blocksArray[i].split(';');
+                blocksArray.splice(i, 1, ...split);
             }
         }
 
         let resultArr: string[] = [];
+        for (let i = 0; i < blocksArray.length; i++) {
+            let str = blocksArray[i];    // bl.25 OR M20 OR 2C etc
 
-        for (let i = 0; i < initialArr.length; i++) {
-            let str = initialArr[i];    // bl.25 OR M20 OR 2C etc
+            const institutions = ['gradinita', 'scoala', 'liceu', 'facultate', 'colegiu', 'gimnaziu', 'cresa'];
+            const isInstitution = institutions.some(elem => {
+                if (str.trim().toLocaleLowerCase().includes(elem)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            })
 
-            // Remove entrance data if it exists; we need to assume everything after 'sc.' is entrance no
-            const index = str.indexOf('sc.');
-            if (index !== -1) {
-                str = str.slice(0, index).trim();
+            if (!isInstitution) {
+                // Remove entrance data if it exists; we need to assume everything after 'sc.' is entrance no
+                const indexSc = str.toLocaleLowerCase().indexOf('sc.');
+                if (indexSc !== -1) {
+                    str = str.slice(0, indexSc).trim();
+                }
+
+                // Remove bl. - assume bl. is at the beginning
+                const indexBl = str.toLocaleLowerCase().indexOf('bl.');
+                if (indexBl !== -1) {
+                    str = str.slice(indexBl + 3);
+                }
+
+                // Remove nr. - assume nr. is at the beginning
+                const indexNr = str.toLocaleLowerCase().indexOf('nr.');
+                if (indexNr !== -1) {
+                    str = str.slice(indexNr + 3);
+                }
             }
-
-            // if (str.includes('-')) {    // could be a range...
-            //     if (str.toLowerCase().includes('bl.') || str.toLowerCase().includes('nr.')) {
-            //         str = str.replace('bl.', '').replace('nr.', '').trim();
-            //     }
-
-            //     const [leftSide, rightSide] = str.trim().split('-');
-            //     if (Number(leftSide) && Number(rightSide)) {    // we can assume it's a range of blocks
-            //         getNumbersInRange(Number.parseInt(leftSide), Number.parseInt(rightSide))
-            //             .map((int) => initialArr.push(int.toString()));
-            //         continue;
-            //     }
-            // }
-
-            const re = /((?:(\D|(\d+\s|\.))[^\s\/.\r\n]*))\s?$/g
-            str = str.match(re)?.join()
-                // .replace(/\-/g, '')         // replace all -
-                .replace(/\./g, '')         // replace all .
-                .replace(/\s/g, '') || str  // replace all whitespace
-
-            // if (str.includes('+')) {
-            //     let [a, b] = str.split('+');
-            //     resultArr.push(a, b);
-            // } else 
-            // if (str.includes('-')) {
-            //     let [a, b] = str.split('-');
-            //     resultArr.push(a, b);
-            // } else {
-            resultArr.push(str)
-            // }
+            resultArr.push(str.trim());
         }
 
         return resultArr;

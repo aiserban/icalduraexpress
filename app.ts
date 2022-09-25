@@ -6,7 +6,8 @@ import { startJobs } from './src/scheduler'
 const app = express()
 const port = 3000
 
-Db.connect().then(() => {
+Db.connect().then(async () => {
+  await Db.clearDb();
   startJobs();
 })
 

@@ -34,25 +34,33 @@ describe('Scrapper tests', () => {
 
     it('can get blocks from a list', async function () {
         const data = [
+            '• Şos Virtuţii - bl. G3, R6A 3+4, R6A 1+2',
             'Bld Prof.dr. Gheorghe Marinescu - imob.Nr.10, 1',
             'Str Cpt. Alexandru Şerbănescu - bl. 17A, 17B, 18A, 19A, 19B, 19F, 19G',
             'Str G-ral Ştefan Burileanu - bl. 11I, 12J, 12K, 13M, 13N, 20-I',
             '• Str Cpt. Alexandru Şerbănescu - bl. 14B, SERBANESCU 12-14, 14C, 16A, 16C',
-            '• Str Căpâlna - bl. 15M, 14D+14E, 15B, 15J, 15K, 15A, 15L, 16H, 16I',
+            '• Str Căpâlna - bl. 15M, 14D+14E, 16I',
             '• Ale Ilia - bl. 56; Pelican; 58C; 58A; 57 sc.2',
-            '• Str Smaranda Brăescu - bl. 20H, 20F, 21 I, 21G, 22D, 21F'
+            '• Str Smaranda Brăescu - bl. 20H, 20F, 21 I, 21F',
+            '• Str Johannes K. Kepler - bl.K/4/1; 2',
+            '• Bld Alexandru Obregia - bl. 18A, 20Bis, A15, R3, R13, II/30, II/31',
+            '• Ale Adrian Dan Urucu - bl. 20, Gradinita nr.227',
         ]
 
         decode(data);
 
         const expected = [
+            ['G3', 'R6A 3+4', 'R6A 1+2'],
             ['10','1'],
             ['17A', '17B', '18A', '19A', '19B', '19F', '19G'],
             ['11I', '12J', '12K', '13M', '13N', '20-I'],
-            ['14B', '12-14', '14C', '16A', '16C'],
-            ['15M', '14D+14E', '15B', '15J', '15K', '15A', '15L', '16H', '16I'],
+            ['14B', 'SERBANESCU 12-14', '14C', '16A', '16C'],
+            ['15M', '14D+14E', '16I'],
             ['56', 'Pelican', '58C', '58A', '57'],
-            ['20H', '20F', '21I', '21G', '22D', '21F']
+            ['20H', '20F', '21 I', '21F'],
+            ['K/4/1', '2'],
+            ['18A', '20Bis', 'A15', 'R3', 'R13', 'II/30', 'II/31'],
+            ['20', 'Gradinita nr.227'],
         ]
 
         for (let i = 0; i < data.length; i++) {
