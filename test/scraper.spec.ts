@@ -36,7 +36,7 @@ describe('Scrapper tests', () => {
         const data = [
             'Bld Prof.dr. Gheorghe Marinescu - imob.Nr.10, 1',
             'Str Cpt. Alexandru Şerbănescu - bl. 17A, 17B, 18A, 19A, 19B, 19F, 19G',
-            'Str G-ral Ştefan Burileanu - bl. 11I, 12J, 12K, 13M, 13N',
+            'Str G-ral Ştefan Burileanu - bl. 11I, 12J, 12K, 13M, 13N, 20-I',
             '• Str Cpt. Alexandru Şerbănescu - bl. 14B, SERBANESCU 12-14, 14C, 16A, 16C',
             '• Str Căpâlna - bl. 15M, 14D+14E, 15B, 15J, 15K, 15A, 15L, 16H, 16I',
             '• Ale Ilia - bl. 56; Pelican; 58C; 58A; 57 sc.2',
@@ -48,7 +48,7 @@ describe('Scrapper tests', () => {
         const expected = [
             ['10','1'],
             ['17A', '17B', '18A', '19A', '19B', '19F', '19G'],
-            ['11I', '12J', '12K', '13M', '13N'],
+            ['11I', '12J', '12K', '13M', '13N', '20-I'],
             ['14B', '12-14', '14C', '16A', '16C'],
             ['15M', '14D+14E', '15B', '15J', '15K', '15A', '15L', '16H', '16I'],
             ['56', 'Pelican', '58C', '58A', '57'],
