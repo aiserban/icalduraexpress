@@ -7,7 +7,7 @@ const app = express()
 const port = 3000
 
 Db.connect().then(async () => {
-  await Db.clearDb();
+  // await Db.clearDb();
   startJobs();
 })
 
