@@ -4,7 +4,7 @@ import Db from './src/db/db'
 import { startJobs } from './src/scheduler'
 
 const app = express()
-const port = 3000
+const port = 3005
 
 Db.connect().then(async () => {
   // await Db.clearDb();
@@ -26,5 +26,5 @@ app.get('/', async (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`iCaldura listening on port ${port}`)
 })
