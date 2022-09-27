@@ -2,8 +2,8 @@
   "name": "icaldura",
   "version": "1.0.0",
   "description": "",
-  "main": "app.ts",
-  "live": "nodemon app.ts",
+  "main": "server.ts",
+  "live": "nodemon server.ts",
   "scripts": {
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/*.ts'"
   },
