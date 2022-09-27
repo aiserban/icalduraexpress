@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 import Issue from '../data/Issue';
 import { add, parse } from 'date-fns';
-import { getNumbersInRange } from '../utils';
+import { getNumbersInRange } from '../../utils';
 var unidecode = require('unidecode')
 
 class Scraper {

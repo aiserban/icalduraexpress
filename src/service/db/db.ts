@@ -1,7 +1,7 @@
 import Issue from "../data/Issue";
-import { IIssue, IssueModel, issueSchema } from "./schemas/issueSchema";
+import { IIssue, IssueModel } from "./schemas/issueSchema";
 import { startOfDay, endOfDay } from 'date-fns';
-import mongoose, { Mongoose, Document } from "mongoose";
+import mongoose from "mongoose";
 
 class Db {
     async connect() {

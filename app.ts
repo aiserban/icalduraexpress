@@ -1,15 +1,15 @@
 import express from 'express'
-import Scraper from './src/scraping/scraper'
-import Db from './src/db/db'
-import { startJobs } from './src/scheduler'
+import Scraper from './src/service/scraping/scraper'
+import Db from './src/service/db/db'
+import { startJobs } from './src/service/scheduler'
 
 const app = express()
 const port = 3005
 
-Db.connect().then(async () => {
-  // await Db.clearDb();
-  startJobs();
-})
+// Db.connect().then(async () => {
+//   // await Db.clearDb();
+//   startJobs();
+// })
 
 
 
