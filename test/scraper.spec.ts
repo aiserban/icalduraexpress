@@ -1,4 +1,4 @@
-import Scraper from '../src/scraping/scraper'
+import Scraper from '../src/service/scraping/scraper'
 import { expect } from 'chai';  // Using Expect style
 var unidecode = require('unidecode')
 
