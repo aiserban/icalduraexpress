@@ -6,6 +6,7 @@
   "live": "nodemon server.ts",
   "scripts": {
     "webpack": "webpack",
+    "watch": "webpack --watch",
     "build": "babel src/app -d build --extensions .ts,.tsx",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/*.ts'"
   },
