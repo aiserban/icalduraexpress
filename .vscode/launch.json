@@ -16,7 +16,7 @@
                 "<node_internals>/**"
             ],
             "type": "node",
-            "preLaunchTask": "npm: watch",
+            // "preLaunchTask": "npm: webpack",
         },
         {
             "console": "integratedTerminal",

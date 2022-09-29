@@ -4,6 +4,10 @@ import { startOfDay, endOfDay } from 'date-fns';
 import mongoose from "mongoose";
 
 class Db {
+    constructor() {
+        this.connect();
+    }
+
     async connect() {
         await mongoose.connect('mongodb://localhost:27017/icaldura')
             .then(() => {
@@ -28,22 +32,20 @@ class Db {
                 let newIssue = new IssueModel(issue);
                 newIssue.save()
             }
-        })
-
-        IssueModel.find().then((res) => {
-
+        }).catch(err => {
+            console.log(err);
         });
     }
 
     async findMany(query: {}): Promise<(mongoose.Document<unknown, any, IIssue> & IIssue & {
         _id: mongoose.Types.ObjectId;
-    })[]> {
-        return IssueModel.find({}).then((results) => {
+    })[] | void> {
+        return   IssueModel.find(query).then(results => {
             return results;
+        }).catch(err => {
+            console.log(err);
         })
-        // .catch((err) => {
-        //     console.log(`--- Unable to find data. Error ${err} ---`);
-        // })
+
     }
 
     async clearDb() {

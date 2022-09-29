@@ -1,16 +1,25 @@
-import React, { useState, useRef } from "react";
-import Select from "react-select";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import Select from 'react-select';
 
 export default function Search() {
-    const [searchInput, setSearchInput] = useState('abc');
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-    ]
+    const [searchInput, setSearchInput] = useState('');
+    const [options, setOptions] = useState([{value: '', label: ''}]);
+
+    useEffect(() => {
+        axios.get(`http://localhost:3005/api/street/${searchInput}`,).then(res => {
+            const matchingStreets = [];
+            for (let i=0; i < (res.data as []).length; i++) {
+                matchingStreets.push({value: res.data[i].street, label: res.data[i].street})
+            }
+            setOptions(matchingStreets);
+        })
+        // }
+    }, [searchInput])
+
     return (
         <>
-            <Select options={options}></Select>
+            <Select placeholder="Introduceti strada..." options={options} onInputChange={input => setSearchInput(input)}></Select>
         </>
     )
 }
