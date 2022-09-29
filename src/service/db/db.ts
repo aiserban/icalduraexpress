@@ -40,12 +40,19 @@ class Db {
     async findMany(query: {}): Promise<(mongoose.Document<unknown, any, IIssue> & IIssue & {
         _id: mongoose.Types.ObjectId;
     })[] | void> {
-        return   IssueModel.find(query).then(results => {
+        return IssueModel.find(query).then(results => {
             return results;
         }).catch(err => {
             console.log(err);
         })
+    }
 
+    async findDistinct(field: string, query: {}): Promise<string[] | void> {
+        return IssueModel.distinct(field, query).then(results => {
+            return results;
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
     async clearDb() {

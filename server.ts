@@ -21,13 +21,33 @@ app.get('/', async (req, res) => {
 // })
 
 app.get('/api/street/:name', async (req, res) => {
-  const query = { street: req.params.name };
+  const re = new RegExp(`.*${req.params.name}.*`, 'i');
+  const query = { street: re };
 
   Db.findMany(query).then(results => {
     res.send(results);
   }).catch(err => {
     console.log(err);
   })
+})
+
+app.get('/api/street/:name/:distinct', async (req, res) => {
+  const re = new RegExp(`.*${req.params.name}.*`, 'i');
+  const query = { street: re };
+
+  if (Boolean(req.params.distinct) === true) {
+    Db.findDistinct('street', query).then(results => {
+      res.send(results);
+    }).catch(err => {
+      console.log(err);
+    })
+  } else {
+    Db.findMany(query).then(results => {
+      res.send(results);
+    }).catch(err => {
+      console.log(err);
+    })
+  }
 })
 
 app.listen(port, () => {
