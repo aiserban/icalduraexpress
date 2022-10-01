@@ -7,7 +7,11 @@ var unidecode = require('unidecode')
 class Scraper {
     url = 'https://www.cmteb.ro/functionare_sistem_termoficare.php';
     data: string = '';
-    dom = JSDOM.fromURL(this.url);
+    dom = JSDOM.fromURL(this.url).then(res => {
+        return res;
+    }).catch(err => {
+        console.log(err);
+    })
 
 
     // Locators - {row} should be replaced to the row entry
@@ -18,18 +22,10 @@ class Scraper {
     issueDescriptionLocTemplate = '#ST tr:nth-of-type({row}) td:nth-of-type(4)';
     estimatedResolutionLocTemplate = '#ST tr:nth-of-type({row}) td:nth-of-type(5)';
 
-    async getRowCount(): Promise<number> {
-        return await this.dom.then(async (dom) => {
-            const count = dom.window.document.querySelectorAll(this.rowLoc).length;
-            return count;
-        })
-    }
-
-
     // Get all rows
     async getAllRows() {
         return await this.dom.then(async (dom) => {
-            const entries = dom.window.document.querySelectorAll(this.rowLoc);
+            const entries = dom!.window.document.querySelectorAll(this.rowLoc);
             return entries;
         })
     }
@@ -105,6 +101,10 @@ class Scraper {
             }
         }
 
+        if (resultArr.length === 0) {
+            resultArr.push('N/A');
+        }
+
         return resultArr;
     }
 
@@ -129,7 +129,16 @@ class Scraper {
      * Where the magic happens
      */
     async scrapData() {
-        this.dom = JSDOM.fromURL(this.url);
+        this.dom = JSDOM.fromURL(this.url).then(res => {
+            return res;
+        }).catch(err => {
+            console.log(err);
+        })
+
+        if (this.dom === undefined) {
+            return [];
+        }
+
         const rows = await this.getAllRows();
         const issueArr: Issue[] = [];
 
