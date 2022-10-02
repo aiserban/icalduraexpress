@@ -5,6 +5,8 @@ import Search from './components/search.component';
 import { subDays } from 'date-fns'
 
 export default function App() {
+    const ip = '192.168.0.174';
+    const port = '3005';
     const [state, setState] = useState({
         selectedStreet: '',
         data: {
@@ -19,7 +21,7 @@ export default function App() {
     const getChartData = async () => {
         const daysAgo = 90;
         const from = subDays(new Date(), daysAgo);
-        axios.get(`http://localhost:3005/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
+        axios.get(`http://${ip}:${port}/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
             const incomingData = (res.data as [{block: string, issueCount: number, noIssueCount: number}]);
             const newState = {
                 ...state,

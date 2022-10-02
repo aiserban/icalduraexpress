@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 
 export default function Search(props: { onChangedStreet: (street: string) => void }) {
+    const ip = '192.168.0.174';
+    const port = '3005';
     let selectedStreet = '';
 
     const handleSelect = (street: string) => {
@@ -19,7 +21,7 @@ export default function Search(props: { onChangedStreet: (street: string) => voi
     // }
 
     const getOptions = async (value: string) => {
-        return axios.get(`http://localhost:3005/api/issue/${value}`).then((res) => {
+        return axios.get(`http://${ip}:${port}/api/issue/${value}`).then((res) => {
             const matchingStreets = (res.data as []).map((street) => {
                 return { value: street, label: street }
             })
