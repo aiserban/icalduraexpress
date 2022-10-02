@@ -1,13 +1,14 @@
 import express from 'express'
 import Db from './src/service/db/db'
 import path from 'path'
+import cors from 'cors'
 
 const app = express()
 const port = 3005
 
 app.use(express.static(path.join(__dirname, "dist")));
 app.use(express.static("public"));
-
+app.use(cors());
 // app.use((req, res, next) => {
 //   res.sendFile(path.join(__dirname, "dist"));
 // });
