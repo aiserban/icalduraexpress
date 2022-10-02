@@ -1,7 +1,7 @@
 import Issue from "../service/data/Issue";
 import { IIssue, IssueModel } from "./schemas/issueSchema";
 import { startOfDay, endOfDay } from 'date-fns';
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 class Db {
     constructor() {
@@ -16,6 +16,14 @@ class Db {
             .catch((err) => {
                 console.log(`--- ISSUES CONNECTING ---\n${err}`);
             })
+    }
+
+    isConnected(): boolean {
+        return mongoose.connection.readyState === 1 ? true : false
+    }
+
+    isConnecting(): boolean {
+        return mongoose.connection.readyState === 2 ? true : false
     }
 
     async addIfNotExists(issue: Issue) {

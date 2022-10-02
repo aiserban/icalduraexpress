@@ -7,12 +7,14 @@ const scheduler = new ToadScheduler();
 const fetchDataTask = new AsyncTask(
     'fetchData',
     async () => {
-        scraper.scrapData().then((data) => {
-            for (let i = 0; i < data.length; i++) {
-                Db.addIfNotExists(data[i]);
+        scraper.scrapData().then(async (data) => {
+            for (let i = 0; i < data!.length; i++) {
+                await Db.addIfNotExists(data![i]);
             }
         }).then(() => {
             console.log('Job executed successully at', new Date().toISOString());
+        }).catch(err => {
+            console.log('Job encountered an error at', new Date().toISOString(), '\n', err)
         })
     }
 )
