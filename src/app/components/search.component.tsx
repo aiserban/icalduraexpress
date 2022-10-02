@@ -1,35 +1,42 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
-// import Select from 'react-select';
-import Async, { useAsync } from 'react-select/async';
 
-export default function Search() {
-    const [searchInput, setSearchInput] = useState('');
+export default function Search(props: { onChangedStreet: (street: string) => void }) {
+    let selectedStreet = '';
+
+    const handleSelect = (street: string) => {
+        selectedStreet = street;
+        // getChartData();
+        props.onChangedStreet(street);
+    }
+
+    // const getChartData = async () => {
+    //     const from = new Date('2022-09-25');
+    //     axios.get(`http://localhost:3005/api/issue/${selectedStreet}/all/${from}`).then((res) => {
+    //         // setChartData((res.data as [{ block: string, datesAdded: Date[] }]));
+    //     })
+    // }
 
     const getOptions = async (value: string) => {
-        const distinct = true;
-        const res = await axios.get(`http://localhost:3005/api/street/${value}/${distinct}`);
-
-        const matchingStreets = [];
-        if (distinct === true) {
-            for (let i = 0; i < (res.data as []).length; i++) {
-                console.log('Log ' + res.data[i]);
-                matchingStreets.push({ value: res.data[i], label: res.data[i] });
-            }
-        } else if (distinct === false) {
-            for (let i = 0; i < (res.data as []).length; i++) {
-                console.log('Log ' + res.data[i]);
-                matchingStreets.push({ value: res.data[i].street, label: res.data[i].street });
-            }
-        }
-
-        return matchingStreets;
+        return axios.get(`http://localhost:3005/api/issue/${value}`).then((res) => {
+            const matchingStreets = (res.data as []).map((street) => {
+                return { value: street, label: street }
+            })
+            return matchingStreets;
+        }).catch((err) => {
+            console.log(err);
+            return [{ value: 'err', label: 'err' }]
+        })
     }
 
     return (
         <>
-            <AsyncSelect cacheOptions defaultOptions={[]} placeholder="Introduceti strada..." loadOptions={getOptions} ></AsyncSelect>
+            <AsyncSelect
+                cacheOptions
+                placeholder="Introduceti strada..."
+                loadOptions={getOptions}
+                onChange={(event) => { handleSelect(event!.value) }} />
         </>
     )
 }

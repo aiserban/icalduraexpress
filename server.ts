@@ -20,33 +20,50 @@ app.get('/', async (req, res) => {
 //   res.send(req.query);
 // })
 
-app.get('/api/street/:name', async (req, res) => {
-  const re = new RegExp(`.*${req.params.name}.*`, 'i');
+// app.get('/api/street/:name', async (req, res) => {
+//   const re = new RegExp(`.*${req.params.name}.*`, 'i');
+//   const query = { street: re };
+
+//   Db.findMany(query).then(results => {
+//     res.send(results);
+//   }).catch(err => {
+//     console.log(err);
+//   })
+// })
+
+app.get('/api/issue/:street/', async (req, res) => {
+  const re = new RegExp(`.*${req.params.street}.*`, 'i');
   const query = { street: re };
 
-  Db.findMany(query).then(results => {
+  Db.findDistinct('street', query).then((results) => {
     res.send(results);
-  }).catch(err => {
+  }).catch((err) => {
     console.log(err);
   })
-})
+}
+)
 
-app.get('/api/street/:name/:distinct', async (req, res) => {
-  const re = new RegExp(`.*${req.params.name}.*`, 'i');
-  const query = { street: re };
+app.get('/api/issue/:street/:blocks/', async (req, res) => {
+  if (req.params.blocks === 'all') {
+    const query = { street: req.params.street };
 
-  if (Boolean(req.params.distinct) === true) {
-    Db.findDistinct('street', query).then(results => {
+    Db.findDistinct('blocks', query).then((results) => {
       res.send(results);
-    }).catch(err => {
+    }).catch((err) => {
       console.log(err);
     })
   } else {
-    Db.findMany(query).then(results => {
+    res.sendStatus(404)
+  }
+})
+
+app.get('/api/issue/:street/:blocks/:from', async (req, res) => {
+  if (req.params.blocks === 'all') {
+    Db.getChartData(req.params.street, new Date(req.params.from)).then((results) => {
       res.send(results);
-    }).catch(err => {
-      console.log(err);
     })
+  } else {
+    res.sendStatus(404)
   }
 })
 

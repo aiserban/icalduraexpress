@@ -55,6 +55,21 @@ class Db {
         })
     }
 
+    async getChartData(street: string, from: Date) {
+        return IssueModel.aggregate([
+            { $match: { street: street }},
+            { $match: { dateAdded: { $gte: new Date(from)}}},
+            { $unwind: '$blocks' },
+            { $project: {blocks: '$blocks', dateAdded: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded'}}}},
+            { $group: {_id: '$blocks', dateAdded: { $addToSet: { $toDate: '$dateAdded'}}}},
+            { $project: {block:'$_id', datesAdded: '$dateAdded', _id:false }}
+        ]).then((results) => {
+            return results;
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
     async clearDb() {
         await IssueModel.deleteMany({});
         console.log('--- DATABASE CLEARED ---');

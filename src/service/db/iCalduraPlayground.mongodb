@@ -1,0 +1,2 @@
+use('icaldura')
+db.issues.find({})
