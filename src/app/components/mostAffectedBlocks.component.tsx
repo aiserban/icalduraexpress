@@ -37,6 +37,21 @@ export default function MostAffectedBlocks(props: { labels: string[], issueCount
         ],
     }
 
+    const IncreaseLegendSpacing = {
+        id: "increase-legend-spacing",
+        beforeInit(chart: any) {
+            // Get reference to the original fit function
+            const originalFit = chart.legend.fit;
+            // Override the fit function
+            chart.legend.fit = function fit() {
+                // Call original function and bind scope in order to use `this` correctly inside it
+                originalFit.bind(chart.legend)();
+                // Change the height as suggested in another answers
+                this.height += 25;
+            }
+        }
+    };
+
     ChartJS.register(
         CategoryScale,
         LinearScale,
@@ -44,7 +59,8 @@ export default function MostAffectedBlocks(props: { labels: string[], issueCount
         Title,
         Tooltip,
         Legend,
-        DataLabels
+        DataLabels,
+        IncreaseLegendSpacing,
     );
 
     ChartJS.defaults.set('plugins.datalabels', {
@@ -70,12 +86,12 @@ export default function MostAffectedBlocks(props: { labels: string[], issueCount
                     font: {
                         size: 14,
                         weight: 'bold'
-                    }
-                }
+                    },
+                },
             },
             title: {
                 display: true,
-                text: 'Istoric avarii in ultimele 90 zile',
+                text: 'Situatie avarii in ultimele 90 zile',
             },
         },
         layout: {
@@ -94,7 +110,7 @@ export default function MostAffectedBlocks(props: { labels: string[], issueCount
                 },
             },
             y: {
-                max: 100,
+                max: 90,
                 ticks: {
                     stepSize: 10,
                     font: {
