@@ -20,19 +20,21 @@ export default function App() {
         const daysAgo = 90;
         const from = subDays(new Date(), daysAgo);
         axios.get(`http://localhost:3005/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
-            const incomingData = (res.data as [{ block: string, datesAdded: Date[] }]);
+            const incomingData = (res.data as [{block: string, issueCount: number, noIssueCount: number}]);
             const newState = {
                 ...state,
                 data: {
                     mostAffectedBlocks: {
                         labels: incomingData.map(item => { return item.block }),
-                        issueCount: incomingData.map(item => { return item.datesAdded.length }),
-                        noIssueCount: incomingData.map(item => { return daysAgo - item.datesAdded.length })
+                        issueCount: incomingData.map(item => { return item.issueCount }),
+                        noIssueCount: incomingData.map(item => { return item.noIssueCount })
                     }
                 }
             }
 
             setState(newState);
+        }).catch(err => {
+            console.log(err)
         })
     }
 

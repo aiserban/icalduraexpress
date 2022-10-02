@@ -55,17 +55,37 @@ class Db {
         })
     }
 
-    async getChartData(street: string, from: Date) {
+    /**
+     *
+     * @param street street name without the type (ex. 'Delfinului)
+     * @param from starting date for the data
+     * @returns mongo _id, block, list of dates with issues
+     */
+    async getChartData(street: string, from: Date): Promise<[string, string, Date[]] | void> {
         return IssueModel.aggregate([
-            { $match: { street: street }},
-            { $match: { dateAdded: { $gte: new Date(from)}}},
+            { $match: { street: street } },
+            { $match: { dateAdded: { $gte: new Date(from) } } },
             { $unwind: '$blocks' },
-            { $project: {blocks: '$blocks', dateAdded: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded'}}}},
-            { $group: {_id: '$blocks', dateAdded: { $addToSet: { $toDate: '$dateAdded'}}}},
-            { $project: {block:'$_id', datesAdded: '$dateAdded', _id:false }}
+            { $project: { blocks: '$blocks', dateAdded: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } } } },
+            { $group: { _id: '$blocks', dateAdded: { $addToSet: { $toDate: '$dateAdded' } } } },
+            { $project: { block: '$_id', datesAdded: '$dateAdded', _id: false } }
         ]).then((results) => {
-            return results;
+            return (results as [string, string, Date[]])
         }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    async getChartDataWithCounts(street: string, fromDate: Date, toDate: Date): Promise<[{_id: string, block: string, issueCount: number, noIssueCount: number}] | void> {
+        return IssueModel.aggregate([
+            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lt: toDate } }] } },
+            { $unwind: '$blocks' },
+            { $group: { _id: '$blocks', dateAdded: { $addToSet: '$dateAdded' } } },
+            { $project: { block: '$_id', issueCount: { $size: '$dateAdded' }, noIssueCount: { $subtract: [{ $dateDiff: { startDate: fromDate, endDate: toDate, unit: 'day' } }, { $size: '$dateAdded' }] }, _id: false } },
+            { $sort: { 'issueCount': -1 }}
+        ]).then(results => {
+            return results as [{_id: string, block: string, issueCount: number, noIssueCount: number}]
+        }).catch(err => {
             console.log(err);
         })
     }

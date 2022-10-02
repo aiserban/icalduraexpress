@@ -60,7 +60,7 @@ app.get('/api/issue/:street/:blocks/', async (req, res) => {
 
 app.get('/api/issue/:street/:blocks/:from', async (req, res) => {
   if (req.params.blocks === 'all') {
-    Db.getChartData(req.params.street, new Date(req.params.from)).then((results) => {
+    Db.getChartDataWithCounts(req.params.street, new Date(req.params.from), new Date()).then((results) => {
       res.send(results);
     })
   } else {
