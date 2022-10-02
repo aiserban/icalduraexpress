@@ -1,5 +1,5 @@
 import express from 'express'
-import Db from './src/service/db/db'
+import Db from './src/db/db'
 import path from 'path'
 import cors from 'cors'
 

@@ -1,5 +1,5 @@
 import { ToadScheduler, SimpleIntervalJob, AsyncTask } from 'toad-scheduler'
-import Db from './db/db';
+import Db from '../db/db';
 import scraper from './scraping/scraper'
 
 const scheduler = new ToadScheduler();

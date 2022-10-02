@@ -1,4 +1,4 @@
-import Issue from "../data/Issue";
+import Issue from "../service/data/Issue";
 import { IIssue, IssueModel } from "./schemas/issueSchema";
 import { startOfDay, endOfDay } from 'date-fns';
 import mongoose from "mongoose";
