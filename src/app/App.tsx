@@ -8,20 +8,27 @@ export default function App() {
     const [state, setState] = useState({
         selectedStreet: '',
         data: {
-            labels: ['A', 'b', 'b', 'x'],
-            mostAffectedBlocks: [4, 4, 4, 4, 4, 4, 4, 4, 4]
+            mostAffectedBlocks: {
+                labels: ['A', 'b', 'b', 'x'],
+                issueCount: [4, 4, 4, 4, 4, 4, 4, 4, 4],
+                noIssueCount: [4, 4, 4, 4, 4, 4, 4, 4, 4],
+            }
         }
     })
 
     const getChartData = async () => {
-        const from = subDays(new Date(), 90);
+        const daysAgo = 90;
+        const from = subDays(new Date(), daysAgo);
         axios.get(`http://localhost:3005/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
             const incomingData = (res.data as [{ block: string, datesAdded: Date[] }]);
             const newState = {
                 ...state,
                 data: {
-                    labels: incomingData.map(item => { return item.block }),
-                    mostAffectedBlocks: incomingData.map(item => { return item.datesAdded.length })
+                    mostAffectedBlocks: {
+                        labels: incomingData.map(item => { return item.block }),
+                        issueCount: incomingData.map(item => { return item.datesAdded.length }),
+                        noIssueCount: incomingData.map(item => { return daysAgo - item.datesAdded.length })
+                    }
                 }
             }
 
@@ -42,7 +49,9 @@ export default function App() {
     return (
         <div>
             <Search onChangedStreet={onChangedStreetCallback} />
-            <MostAffectedBlocks labels={state.data.labels} data={state.data.mostAffectedBlocks} />
+            <MostAffectedBlocks labels={state.data.mostAffectedBlocks.labels}
+                issueCount={state.data.mostAffectedBlocks.issueCount}
+                noIssueCount={state.data.mostAffectedBlocks.noIssueCount} />
         </div>
     )
 }

@@ -11,20 +11,28 @@ import {
 import DataLabels from 'chartjs-plugin-datalabels'
 import { Bar } from 'react-chartjs-2';
 
-export default function MostAffectedBlocks(props: { labels: string[], data: number[] }) {
+export default function MostAffectedBlocks(props: { labels: string[], issueCount: number[], noIssueCount: number[] }) {
     const [labels, setLabels] = useState(props.labels);
-    const [data, setData] = useState(props.data)
+    const [data, setData] = useState({ issueCount: props.issueCount, noIssueCount: props.noIssueCount })
 
     const chartData = {
         labels: labels,
         datasets: [
             {
-                label: 'Zile cu avarie',
-                data: data,
+                label: 'Zile cu avarii',
+                data: data.issueCount,
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 maxBarThickness: 20,
                 borderWidth: 1,
                 borderColor: 'red',
+            },
+            {
+                label: 'Zile fara avarii',
+                data: data.noIssueCount,
+                backgroundColor: '#95ccfc',
+                maxBarThickness: 20,
+                borderWidth: 1,
+                borderColor: 'blue',
             }
         ],
     }
@@ -99,7 +107,7 @@ export default function MostAffectedBlocks(props: { labels: string[], data: numb
 
     useEffect(() => {
         setLabels(props.labels);
-        setData(props.data)
+        setData({ issueCount: props.issueCount, noIssueCount: props.noIssueCount });
     }, [props]);
 
     return (
