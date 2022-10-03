@@ -1,11 +1,11 @@
-import Scraper from '../src/service/scraper'
+import { scraper } from '../src/service/scraper'
 import { expect } from 'chai';  // Using Expect style
 var unidecode = require('unidecode')
 
 
 describe('Scrapper tests', () => {
-    const decode = function(data: string[]) {
-        for (let i = 0; i < data.length; i++){
+    const decode = function (data: string[]) {
+        for (let i = 0; i < data.length; i++) {
             data[i] = unidecode(data[i]);
         }
     }
@@ -25,8 +25,8 @@ describe('Scrapper tests', () => {
             'Bld Prof.dr. Gheorghe Marinescu'
         ]
 
-        for (let i = 0; i < data.length; i++ ) {
-            const actual = await Scraper.filterAddresses(data[i]);
+        for (let i = 0; i < data.length; i++) {
+            const actual = await scraper.filterAddresses(data[i]);
             expect(actual).to.eql(expected[i]);
         }
     })
@@ -51,7 +51,7 @@ describe('Scrapper tests', () => {
 
         const expected = [
             ['G3', 'R6A 3+4', 'R6A 1+2'],
-            ['imob.Nr.10','1'],
+            ['imob.Nr.10', '1'],
             ['17A', '17B', '18A', '19A', '19B', '19F', '19G'],
             ['11I', '12J', '12K', '13M', '13N', '20-I'],
             ['14B', 'SERBANESCU 12-14', '14C', '16A', '16C'],
@@ -64,7 +64,7 @@ describe('Scrapper tests', () => {
         ]
 
         for (let i = 0; i < data.length; i++) {
-            let actual = await Scraper.getArrayOfBlocks(data[i]);
+            let actual = await scraper.getArrayOfBlocks(data[i]);
             expect(actual).to.have.members(expected[i]);
         }
     })
@@ -93,7 +93,7 @@ describe('Scrapper tests', () => {
         ]
 
         for (let i = 0; i < data.length; i++) {
-            const actual = await Scraper.getRoadType(data[i]);
+            const actual = await scraper.getRoadType(data[i]);
             expect(actual).to.eql(expected[i]);
         }
     })

@@ -1,9 +1,9 @@
-import Issue from "../service/data/Issue";
+import { Issue } from "../service/data/Issue";
 import { IIssue, IssueModel } from "./schemas/issueSchema";
 import { startOfDay, endOfDay } from 'date-fns';
 import mongoose, { mongo } from "mongoose";
 
-class Db {
+class Database {
     constructor() {
         this.connect();
     }
@@ -84,15 +84,15 @@ class Db {
         })
     }
 
-    async getChartDataWithCounts(street: string, fromDate: Date, toDate: Date): Promise<[{_id: string, block: string, issueCount: number, noIssueCount: number}] | void> {
+    async getChartDataWithCounts(street: string, fromDate: Date, toDate: Date): Promise<[{ _id: string, block: string, issueCount: number, noIssueCount: number }] | void> {
         return IssueModel.aggregate([
             { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lt: toDate } }] } },
             { $unwind: '$blocks' },
             { $group: { _id: '$blocks', dateAdded: { $addToSet: '$dateAdded' } } },
             { $project: { block: '$_id', issueCount: { $size: '$dateAdded' }, noIssueCount: { $subtract: [{ $dateDiff: { startDate: fromDate, endDate: toDate, unit: 'day' } }, { $size: '$dateAdded' }] }, _id: false } },
-            { $sort: { 'issueCount': -1 }}
+            { $sort: { 'issueCount': -1 } }
         ]).then(results => {
-            return results as [{_id: string, block: string, issueCount: number, noIssueCount: number}]
+            return results as [{ _id: string, block: string, issueCount: number, noIssueCount: number }]
         }).catch(err => {
             console.log(err);
         })
@@ -104,4 +104,4 @@ class Db {
     }
 }
 
-export default new Db();
+export const db = new Database();

@@ -1,5 +1,5 @@
 import { JSDOM } from 'jsdom';
-import Issue from './data/Issue';
+import { Issue } from './data/Issue';
 import { add, parse } from 'date-fns';
 import { getNumbersInRange } from '../utils';
 var unidecode = require('unidecode')
@@ -185,4 +185,4 @@ class Scraper {
     }
 }
 
-export default new Scraper();
+export const scraper = new Scraper();

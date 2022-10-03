@@ -11,7 +11,7 @@ import {
 import DataLabels from 'chartjs-plugin-datalabels'
 import { Bar } from 'react-chartjs-2';
 
-export default function MostAffectedBlocks(props: { labels: string[], issueCount: number[], noIssueCount: number[] }) {
+export function MostAffectedBlocks(props: { labels: string[], issueCount: number[], noIssueCount: number[] }) {
     const [labels, setLabels] = useState(props.labels);
     const [data, setData] = useState({ issueCount: props.issueCount, noIssueCount: props.noIssueCount })
 

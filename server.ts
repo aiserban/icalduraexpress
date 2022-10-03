@@ -1,5 +1,5 @@
 import express from 'express'
-import Db from './src/db/db'
+import { db } from './src/db/db'
 import path from 'path'
 import cors from 'cors'
 
@@ -36,7 +36,7 @@ app.get('/api/issue/:street/', async (req, res) => {
   const re = new RegExp(`.*${req.params.street}.*`, 'i');
   const query = { street: re };
 
-  Db.findDistinct('street', query).then((results) => {
+  db.findDistinct('street', query).then((results) => {
     res.send(results);
   }).catch((err) => {
     console.log(err);
@@ -48,7 +48,7 @@ app.get('/api/issue/:street/:blocks/', async (req, res) => {
   if (req.params.blocks === 'all') {
     const query = { street: req.params.street };
 
-    Db.findDistinct('blocks', query).then((results) => {
+    db.findDistinct('blocks', query).then((results) => {
       res.send(results);
     }).catch((err) => {
       console.log(err);
@@ -60,7 +60,7 @@ app.get('/api/issue/:street/:blocks/', async (req, res) => {
 
 app.get('/api/issue/:street/:blocks/:from', async (req, res) => {
   if (req.params.blocks === 'all') {
-    Db.getChartDataWithCounts(req.params.street, new Date(req.params.from), new Date()).then((results) => {
+    db.getChartDataWithCounts(req.params.street, new Date(req.params.from), new Date()).then((results) => {
       res.send(results);
     })
   } else {

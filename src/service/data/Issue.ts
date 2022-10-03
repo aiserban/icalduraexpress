@@ -1,4 +1,4 @@
-class Issue {
+export class Issue {
     district: string = '';
     roadType: string = '';
     street: string = '';
@@ -28,5 +28,3 @@ class Issue {
         this.dateAdded = dateAdded;
     }
 }
-
-export default Issue;

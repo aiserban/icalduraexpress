@@ -1,6 +1,6 @@
 import { ToadScheduler, SimpleIntervalJob, AsyncTask } from 'toad-scheduler'
-import Db from '../db/db';
-import scraper from './scraper'
+import { db } from '../db/db';
+import { scraper } from './scraper'
 
 const scheduler = new ToadScheduler();
 
@@ -9,7 +9,7 @@ const fetchDataTask = new AsyncTask(
     async () => {
         scraper.scrapData().then(async (data) => {
             for (let i = 0; i < data!.length; i++) {
-                await Db.addIfNotExists(data![i]);
+                await db.addIfNotExists(data![i]);
             }
         }).then(() => {
             console.log('Job executed successully at', new Date().toISOString());

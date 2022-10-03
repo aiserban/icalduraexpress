@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import AsyncSelect from "react-select/async";
 
-export default function Search(props: { onChangedStreet: (street: string) => void }) {
+export function Search(props: { onChangedStreet: (street: string) => void }) {
     const ip = '192.168.0.174';
     const port = '3005';
     let selectedStreet = '';

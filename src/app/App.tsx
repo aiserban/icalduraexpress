@@ -1,10 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import MostAffectedBlocks from './components/mostAffectedBlocks.component';
-import Search from './components/search.component';
+import { MostAffectedBlocks } from './components/mostAffectedBlocks.component';
+import { Search } from './components/search.component';
 import { subDays } from 'date-fns'
 
-export default function App() {
+export function App() {
     const ip = '192.168.0.174';
     const port = '3005';
     const [state, setState] = useState({
@@ -22,7 +22,7 @@ export default function App() {
         const daysAgo = 90;
         const from = subDays(new Date(), daysAgo);
         axios.get(`http://${ip}:${port}/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
-            const incomingData = (res.data as [{block: string, issueCount: number, noIssueCount: number}]);
+            const incomingData = (res.data as [{ block: string, issueCount: number, noIssueCount: number }]);
             const newState = {
                 ...state,
                 data: {
