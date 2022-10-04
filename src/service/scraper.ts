@@ -175,21 +175,23 @@ class Scraper {
 
                 if (address) {
                     const blocks = await this.getArrayOfBlocksFromFullAddress(address) || '';
-                    const street = await this.getStreetNameFromFullAdress(address) || '';
-                    const roadType =  roadTypeMappings[await this.getRoadType(address) || ''];
-                    const fullStreet = `${roadTypeMappings[roadType]} ${street}` || '';
+                    const streetName = await this.getStreetNameFromFullAdress(address) || '';
+                    const roadType = roadTypeMappings[await this.getRoadType(address) || ''];
+                    const street = `${roadType} ${streetName}` || '';
 
                     const issue = new Issue(
                         district,
                         roadType,
+                        streetName,
                         street,
-                        fullStreet,
                         blocks,
                         issueType,
                         description,
                         resolutionTime,
                         new Date()
                     )
+
+
 
                     issueArr.push(issue);
                 }

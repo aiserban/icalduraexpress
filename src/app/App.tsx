@@ -8,7 +8,7 @@ export function App() {
     const ip = '192.168.0.174';
     const port = '3005';
     const [state, setState] = useState({
-        selectedFullStreet: '',
+        selectedStreet: '',
         data: {
             mostAffectedBlocks: {
                 labels: ['A', 'b', 'b', 'x'],
@@ -21,7 +21,7 @@ export function App() {
     const getHistoricalDataForStreet = async () => {
         const daysAgo = 90;
         const from = subDays(new Date(), daysAgo);
-        axios.get(`http://${ip}:${port}/api/issue/${state.selectedFullStreet}/all/${from}`).then((res) => {
+        axios.get(`http://${ip}:${port}/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
             const incomingData = (res.data as [{ block: string, issueCount: number, noIssueCount: number }]);
             const newState = {
                 ...state,
@@ -45,7 +45,7 @@ export function App() {
     }, [state])
 
     const onChangedStreetCallback = (street: string) => {
-        state.selectedFullStreet = street;
+        state.selectedStreet = street;
         getHistoricalDataForStreet();
     }
 

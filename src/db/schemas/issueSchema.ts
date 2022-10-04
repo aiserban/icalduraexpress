@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 export interface IIssue {
     district: string;
     roadType: string;
+    streetName: string;
     street: string;
-    fullStreet: string;
     blocks: Array<string>;
     issueType: string;
     description: string;
@@ -15,8 +15,8 @@ export interface IIssue {
 export const issueSchema = new mongoose.Schema<IIssue>({
     district: { type: String },
     roadType: { type: String },
-    street: { type: String, index: 'text' },
-    fullStreet: { type: String },
+    streetName: { type: String, index: 'text' },
+    street: { type: String },
     blocks: { type: [String] },
     issueType: { type: String },
     description: { type: String },
