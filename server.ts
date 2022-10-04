@@ -32,21 +32,22 @@ app.get('/', async (req, res) => {
 //   })
 // })
 
-app.get('/api/issue/:street/', async (req, res) => {
-  const re = new RegExp(`.*${req.params.street}.*`, 'i');
-  const query = { street: re };
 
-  db.findDistinct('street', query).then((results) => {
+
+/**
+ * Used for searching for a street and returning results from the db
+ */
+app.get('/api/issue/:street/', async (req, res) => {
+  db.findStreet(req.params.street).then((results) => {
     res.send(results);
   }).catch((err) => {
     console.log(err);
   })
-}
-)
+})
 
-app.get('/api/issue/:street/:blocks/', async (req, res) => {
+app.get('/api/issue/:fullStreet/:blocks/', async (req, res) => {
   if (req.params.blocks === 'all') {
-    const query = { street: req.params.street };
+    const query = { fullStreet: req.params.fullStreet };
 
     db.findDistinct('blocks', query).then((results) => {
       res.send(results);
@@ -58,9 +59,9 @@ app.get('/api/issue/:street/:blocks/', async (req, res) => {
   }
 })
 
-app.get('/api/issue/:street/:blocks/:from', async (req, res) => {
+app.get('/api/issue/:fullStreet/:blocks/:from', async (req, res) => {
   if (req.params.blocks === 'all') {
-    db.getChartDataWithCounts(req.params.street, new Date(req.params.from), new Date()).then((results) => {
+    db.getChartDataWithCounts(req.params.fullStreet, new Date(req.params.from), new Date()).then((results) => {
       res.send(results);
     })
   } else {

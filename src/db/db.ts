@@ -26,6 +26,21 @@ class Database {
         return mongoose.connection.readyState === 2 ? true : false
     }
 
+    async findStreet(input: string): Promise<void | { roadType: string, street: string }[]> {
+        let re = new RegExp(`.*${input}.*`, 'i');
+        return await IssueModel.aggregate([
+            { $match: { fullStreet: re } },
+            { $limit: 50 },
+            { $group: { _id: { fullStreet: '$fullStreet', roadType: '$roadType', street: '$street' } } },
+            { $limit: 10 },
+            { $project: { fullStreet: '$_id.fullStreet', roadType: '$_id.roadType', street: '$_id.street', _id: 0 } }
+        ]).then(results => {
+            return results as [{ roadType: string, street: string, fullStreet: string }]
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
     async addIfNotExists(issue: Issue) {
         await IssueModel.find({
             district: issue.district,
@@ -84,9 +99,9 @@ class Database {
         })
     }
 
-    async getChartDataWithCounts(street: string, fromDate: Date, toDate: Date): Promise<[{ _id: string, block: string, issueCount: number, noIssueCount: number }] | void> {
+    async getChartDataWithCounts(fullStreet: string, fromDate: Date, toDate: Date): Promise<[{ _id: string, block: string, issueCount: number, noIssueCount: number }] | void> {
         return IssueModel.aggregate([
-            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lt: toDate } }] } },
+            { $match: { $and: [{ fullStreet: fullStreet }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lt: toDate } }] } },
             { $unwind: '$blocks' },
             { $group: { _id: '$blocks', dateAdded: { $addToSet: '$dateAdded' } } },
             { $project: { block: '$_id', issueCount: { $size: '$dateAdded' }, noIssueCount: { $subtract: [{ $dateDiff: { startDate: fromDate, endDate: toDate, unit: 'day' } }, { $size: '$dateAdded' }] }, _id: false } },
@@ -97,6 +112,18 @@ class Database {
             console.log(err);
         })
     }
+
+
+    /* ------ TOP
+    db.issues.aggregate([
+    {$match: { street: 'Constantin RadulescuMotru'}},
+    { $unwind: '$blocks' },
+    //    { $project: { block: '$blocks', street: '$street', dateAdded: { $dateToString: {format: '%Y-%m-%d', date: '$dateAdded'}}}},
+    { $group: {_id: {street: '$street', block: '$blocks', dateAdded: { $dateToString: {format: '%Y-%m-%d', date: '$dateAdded'}}}, count: { $sum: 1 }}},
+    { $sort: { count: -1 }}
+    ])
+
+    */
 
     async clearDb() {
         await IssueModel.deleteMany({});

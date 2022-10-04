@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { MostAffectedBlocks } from './components/mostAffectedBlocks.component';
+import { HistoricalDataForStreetChart } from './components/historicalDataForStreetChart.component';
 import { Search } from './components/search.component';
 import { subDays } from 'date-fns'
 
@@ -8,7 +8,7 @@ export function App() {
     const ip = '192.168.0.174';
     const port = '3005';
     const [state, setState] = useState({
-        selectedStreet: '',
+        selectedFullStreet: '',
         data: {
             mostAffectedBlocks: {
                 labels: ['A', 'b', 'b', 'x'],
@@ -18,10 +18,10 @@ export function App() {
         }
     })
 
-    const getChartData = async () => {
+    const getHistoricalDataForStreet = async () => {
         const daysAgo = 90;
         const from = subDays(new Date(), daysAgo);
-        axios.get(`http://${ip}:${port}/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
+        axios.get(`http://${ip}:${port}/api/issue/${state.selectedFullStreet}/all/${from}`).then((res) => {
             const incomingData = (res.data as [{ block: string, issueCount: number, noIssueCount: number }]);
             const newState = {
                 ...state,
@@ -45,15 +45,15 @@ export function App() {
     }, [state])
 
     const onChangedStreetCallback = (street: string) => {
-        state.selectedStreet = street;
-        console.log(street);
-        getChartData();
+        state.selectedFullStreet = street;
+        getHistoricalDataForStreet();
     }
 
     return (
         <div>
             <Search onChangedStreet={onChangedStreetCallback} />
-            <MostAffectedBlocks labels={state.data.mostAffectedBlocks.labels}
+            <HistoricalDataForStreetChart
+                labels={state.data.mostAffectedBlocks.labels}
                 issueCount={state.data.mostAffectedBlocks.issueCount}
                 noIssueCount={state.data.mostAffectedBlocks.noIssueCount} />
         </div>

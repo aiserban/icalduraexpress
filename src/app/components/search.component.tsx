@@ -9,22 +9,15 @@ export function Search(props: { onChangedStreet: (street: string) => void }) {
 
     const handleSelect = (street: string) => {
         selectedStreet = street;
-        // getChartData();
         props.onChangedStreet(street);
     }
 
-    // const getChartData = async () => {
-    //     const from = new Date('2022-09-25');
-    //     axios.get(`http://localhost:3005/api/issue/${selectedStreet}/all/${from}`).then((res) => {
-    //         // setChartData((res.data as [{ block: string, datesAdded: Date[] }]));
-    //     })
-    // }
-
-    const getOptions = async (value: string) => {
+    const getStreets = async (value: string) => {
         return axios.get(`http://${ip}:${port}/api/issue/${value}`).then((res) => {
-            const matchingStreets = (res.data as []).map((street) => {
-                return { value: street, label: street }
-            })
+            const matchingStreets = (res.data as [{ roadType: string, street: string, fullStreet: string }])
+                .map((street) => {
+                    return { value: street.fullStreet, label: street.fullStreet }
+                })
             return matchingStreets;
         }).catch((err) => {
             console.log(err);
@@ -37,7 +30,7 @@ export function Search(props: { onChangedStreet: (street: string) => void }) {
             <AsyncSelect
                 cacheOptions
                 placeholder="Introduceti strada..."
-                loadOptions={getOptions}
+                loadOptions={getStreets}
                 onChange={(event) => { handleSelect(event!.value) }} />
         </>
     )

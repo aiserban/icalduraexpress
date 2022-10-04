@@ -2,6 +2,7 @@ import { JSDOM } from 'jsdom';
 import { Issue } from './data/Issue';
 import { add, parse } from 'date-fns';
 import { getNumbersInRange } from '../utils';
+import { roadTypeMappings } from './enums';
 var unidecode = require('unidecode')
 
 class Scraper {
@@ -20,32 +21,46 @@ class Scraper {
 
     // Get all rows
     async getAllRows(dom: JSDOM) {
-        // return await dom.then(async (dom) => {
         const entries = dom.window.document.querySelectorAll(this.rowLoc);
         return entries;
-        // }).catch(err => {
-        //     console.log(err)
-        // })
     }
 
-    async filterAddresses(address: string): Promise<string | undefined> {
+    async getOnlyAddressStrings(address: string): Promise<string | void> {
         address = unidecode(address);
 
         if (address.startsWith('*')) {        // if it doesn't start with a * , it's not an address
             return address.replace('*', '').trim();
         }
-        return undefined
     }
 
-    async getStreetName(address: string): Promise<string | undefined> {
+    /**
+     * Get the street name, like 'Virtutii', from a full address string
+     * @param address Full address string
+     * e.g. 'Str G-Ral Radulescu - bl. 58
+     * @returns just the name of the street, without the road type
+     */
+    async getStreetNameFromFullAdress(address: string): Promise<string> {
         address = unidecode(address);
+        address = address.replace('*', '').trim();
+
+        let result = ''
 
         const re = /(\s.+)(?:\s-)/g
-        const result = address.match(re)?.join().trim().replaceAll('-', '').trim();
+        try {
+            result = address.match(re)?.join().trim().slice(0, result?.lastIndexOf('-')).trim() || ''
+        } catch (err) {
+            console.log(err);
+        }
+
         return result;
     }
 
-    async getArrayOfBlocks(address: string) {
+    /**
+     *
+     * @param address full address string
+     * @returns the list of blocks
+     */
+    async getArrayOfBlocksFromFullAddress(address: string) {
         address = unidecode(address);
 
         const re = /(?:-\s)(.*)$/g
@@ -83,18 +98,14 @@ class Scraper {
                 // Remove bl. - assume bl. is at the beginning
                 if (str.toLocaleLowerCase().startsWith('bl.')) {
                     str = str.replace('bl.', '');
+                } else if (str.toLocaleLowerCase().startsWith('bl .')) {
+                    str = str.replace('bl .', '')
                 } else if (str.toLocaleLowerCase().startsWith('bl')) {
                     str = str.replace('bl', '')
                 }
-
-                // Remove nr. - assume nr. is at the beginning
-                // const indexNr = str.toLocaleLowerCase().indexOf('nr.');
-                // if (indexNr !== -1) {
-                //     str = str.slice(indexNr + 3);
-                // }
             }
 
-            if (str !== '') {
+            if (str.trim() !== '') {
                 resultArr.push(str.trim());
             }
         }
@@ -114,6 +125,9 @@ class Scraper {
      */
     async getRoadType(street: string): Promise<string | undefined> {
         street = unidecode(street)
+        if(street.startsWith('*')) {
+            street = street.replace('*', '').trim();
+        }
 
         // const re = /^([^\s]+)/g
         const re = /^(?:•|\s|)(?:\s+|)(\w+-?\w+)/g
@@ -126,7 +140,7 @@ class Scraper {
     /**
      * Where the magic happens
      */
-    async scrapData() {
+    async scrapData(): Promise<Issue[] | void> {
         const issueArr: Issue[] = [];
 
         const dom = await JSDOM.fromURL(this.url).then(res => {
@@ -155,19 +169,21 @@ class Scraper {
                 }
             });
 
-
             for (let i = 0; i < addressList.length; i++) {
-                const cleanAddress = await this.filterAddresses(addressList[i]);
+                const address = await this.getOnlyAddressStrings(addressList[i]);
+                // const address = addressList[i];
 
-                if (cleanAddress) {
-                    const blocks = await this.getArrayOfBlocks(cleanAddress) || '';
-                    const street = await this.getStreetName(cleanAddress) || '';
-                    const roadType = await this.getRoadType(cleanAddress) || '';
+                if (address) {
+                    const blocks = await this.getArrayOfBlocksFromFullAddress(address) || '';
+                    const street = await this.getStreetNameFromFullAdress(address) || '';
+                    const roadType =  roadTypeMappings[await this.getRoadType(address) || ''];
+                    const fullStreet = `${roadTypeMappings[roadType]} ${street}` || '';
 
                     const issue = new Issue(
                         district,
                         roadType,
                         street,
+                        fullStreet,
                         blocks,
                         issueType,
                         description,
