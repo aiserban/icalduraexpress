@@ -22,8 +22,10 @@ export const issueSchema = new mongoose.Schema<IIssue>({
     description: { type: String },
     resolutionTime: { type: Date },
     dateAdded: { type: Date }
-}, { collection: 'issues', collation: { locale: 'en_US', strength: 1, caseLevel: true } })
+}, { collection: 'issues', collation: { locale: 'simple', strength: 1, caseLevel: true } })
 
 issueSchema.index({street: 1, blocks: 1});
+issueSchema.index({street: 'text'});
+issueSchema.index({blocks: 1 });
 
 export const IssueModel = mongoose.model<IIssue>('IssueModel', issueSchema);
