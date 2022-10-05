@@ -22,6 +22,6 @@ export const issueSchema = new mongoose.Schema<IIssue>({
     description: { type: String },
     resolutionTime: { type: Date },
     dateAdded: { type: Date }
-}, { collection: 'issues' })
+}, { collection: 'issues', collation: { locale: 'en_US', strength: 1, caseLevel: true } })
 
 export const IssueModel = mongoose.model<IIssue>('IssueModel', issueSchema);

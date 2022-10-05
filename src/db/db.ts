@@ -33,7 +33,8 @@ class Database {
             { $limit: 50 },
             { $group: { _id: { street: '$street', roadType: '$roadType', streetName: '$streetName' } } },
             { $limit: 10 },
-            { $project: { street: '$_id.street', roadType: '$_id.roadType', streetName: '$_id.streetName', _id: 0 } }
+            { $project: { street: '$_id.street', roadType: '$_id.roadType', streetName: '$_id.streetName', _id: 0 } },
+            { $sort: { street: 1}}
         ]).then(results => {
             return results as [{ street: string, roadType: string, streetName: string }]
         }).catch(err => {
