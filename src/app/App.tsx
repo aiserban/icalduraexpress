@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { HistoricalDataForStreetChart } from './components/historicalDataForStreetChart.component';
 import { Search } from './components/search.component';
 import { subDays } from 'date-fns'
+import { TopBlocks } from './components/topBlocks.component';
 
 export function App() {
     const ip = '192.168.0.174';
@@ -18,7 +19,7 @@ export function App() {
         }
     })
 
-    const getHistoricalDataForStreet = async () => {
+    const getHistoricalDataForStreet = () => {
         const daysAgo = 90;
         const from = subDays(new Date(), daysAgo);
         axios.get(`http://${ip}:${port}/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
@@ -56,6 +57,7 @@ export function App() {
                 labels={state.data.mostAffectedBlocks.labels}
                 issueCount={state.data.mostAffectedBlocks.issueCount}
                 noIssueCount={state.data.mostAffectedBlocks.noIssueCount} />
+            <TopBlocks />
         </div>
     )
 }

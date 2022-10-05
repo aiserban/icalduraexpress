@@ -34,7 +34,7 @@ class Database {
             { $group: { _id: { street: '$street', roadType: '$roadType', streetName: '$streetName' } } },
             { $limit: 10 },
             { $project: { street: '$_id.street', roadType: '$_id.roadType', streetName: '$_id.streetName', _id: 0 } },
-            { $sort: { street: 1}}
+            { $sort: { street: 1 } }
         ]).then(results => {
             return results as [{ street: string, roadType: string, streetName: string }]
         }).catch(err => {
@@ -103,9 +103,9 @@ class Database {
      */
     async getChartDataWithIssueCounts(street: string, fromDate: Date, toDate: Date): Promise<[{ _id: string, block: string, issueCount: number, noIssueCount: number }] | void> {
         return IssueModel.aggregate([
-            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lt: toDate } }] } },
+            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lte: toDate } }] } },
             { $unwind: '$blocks' },
-            { $group: { _id: '$blocks', dateAdded: { $addToSet: '$dateAdded' } } },
+            { $group: { _id: '$blocks', dateAdded: { $addToSet: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } } } } },
             { $project: { block: '$_id', issueCount: { $size: '$dateAdded' }, noIssueCount: { $subtract: [{ $dateDiff: { startDate: fromDate, endDate: toDate, unit: 'day' } }, { $size: '$dateAdded' }] }, _id: false } },
             { $sort: { 'issueCount': -1 } }
         ]).then(results => {
@@ -115,17 +115,23 @@ class Database {
         })
     }
 
-
-    /* ------ TOP
-    db.issues.aggregate([
-    {$match: { street: 'Constantin RadulescuMotru'}},
-    { $unwind: '$blocks' },
-    //    { $project: { block: '$blocks', street: '$street', dateAdded: { $dateToString: {format: '%Y-%m-%d', date: '$dateAdded'}}}},
-    { $group: {_id: {street: '$street', block: '$blocks', dateAdded: { $dateToString: {format: '%Y-%m-%d', date: '$dateAdded'}}}, count: { $sum: 1 }}},
-    { $sort: { count: -1 }}
-    ])
-
-    */
+    /**
+     * Get the top ten blocks (including streets) with the most issues
+     * @returns the street and block combination with the most issues recorded
+     */
+    async getTopBlocks(limit: number): Promise<[{street: string, block: string, count: number}] | void> {
+        return IssueModel.aggregate([
+            { $unwind: '$blocks' },
+            { $group: { _id: { street: '$street', block: '$blocks' }, datesAdded: { $addToSet: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } } } } },
+            { $project: { street: '$_id.street', block: '$_id.block', count: { $size: '$datesAdded' } } },
+            { $sort: { 'count': -1 } },
+            { $limit: limit }
+        ]).then(results => {
+            return results as [{street: string, block: string, count: number}]
+        }).catch(err => {
+            console.log(err)
+        })
+    }
 
     async clearDb() {
         await IssueModel.deleteMany({});

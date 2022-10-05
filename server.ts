@@ -46,10 +46,25 @@ app.get('/api/issue/:street/:blocks/:from', async (req, res) => {
   if (req.params.blocks === 'all') {
     db.getChartDataWithIssueCounts(req.params.street, new Date(req.params.from), new Date()).then((results) => {
       res.send(results);
+    }).catch(err => {
+      console.log(err)
     })
   } else {
     res.sendStatus(404)
   }
+})
+
+app.get('/api/top/blocks/:count', async (req, res) => {
+  let limit = parseInt(req.params.count);
+  if (limit === NaN) {
+    limit = 10
+  }
+
+  db.getTopBlocks(limit).then(results => {
+    res.send(results);
+  }).catch(err => {
+    console.log(err)
+  })
 })
 
 app.listen(port, () => {

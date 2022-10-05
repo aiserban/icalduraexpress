@@ -15,7 +15,7 @@ export interface IIssue {
 export const issueSchema = new mongoose.Schema<IIssue>({
     district: { type: String },
     roadType: { type: String },
-    streetName: { type: String, index: 'text' },
+    streetName: { type: String },
     street: { type: String },
     blocks: { type: [String] },
     issueType: { type: String },
@@ -23,5 +23,7 @@ export const issueSchema = new mongoose.Schema<IIssue>({
     resolutionTime: { type: Date },
     dateAdded: { type: Date }
 }, { collection: 'issues', collation: { locale: 'en_US', strength: 1, caseLevel: true } })
+
+issueSchema.index({street: 1, blocks: 1});
 
 export const IssueModel = mongoose.model<IIssue>('IssueModel', issueSchema);

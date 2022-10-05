@@ -11,5 +11,6 @@ export const roadTypeMappings: Indexable = {
     'Pta': 'Piata',
     'Sos': 'Soseaua',
     'Spl': 'Splaiul',
-    'Str': 'Strada'
+    'Str': 'Strada',
+    'Prl': 'Prelungirea'
 }
