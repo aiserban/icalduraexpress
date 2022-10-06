@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-} from 'chart.js';
-import DataLabels from 'chartjs-plugin-datalabels'
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import { AppConfig } from '../../../app.config';
 
-export function TopBlocks() {
+export function TopBlocksChart() {
     const [data, setData] = useState({ labels: [''], issueCount: [0] })
 
     const chartData = {

@@ -1,19 +1,20 @@
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { initChartDefaults } from './chartDefaults';
 import { HistoricalDataForStreetChart } from './components/historicalDataForStreetChart.component';
 import { Search } from './components/search.component';
-import { subDays } from 'date-fns'
-import { TopBlocks } from './components/topBlocks.component';
-import { AppConfig } from '../../app.config';
+import { TopBlocksChart } from './components/topBlocksChart.component';
+
 
 export function App() {
+    initChartDefaults();
+
     const [selectedStreet, setSelectedStreet] = useState('');
 
     return (
         <div>
             <Search onChangedStreet={street => { setSelectedStreet(street) }} />
             <HistoricalDataForStreetChart selectedStreet={selectedStreet} />
-            <TopBlocks />
+            <TopBlocksChart />
         </div>
     )
 }
