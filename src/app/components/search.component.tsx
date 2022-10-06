@@ -13,9 +13,13 @@ export function Search(props: { onChangedStreet: (street: string) => void }) {
         props.onChangedStreet(street);
     }
 
-    const getStreets = async (value: string) => {
-        value = unidecode(value);
-        return axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${value}`).then((res) => {
+    const getStreets = async (input: string): Promise<{ value: string, label: string }[]> => {
+        if (input === undefined || input.length < 3) {
+            return []
+        }
+
+        input = unidecode(input);
+        return axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${input}`).then((res) => {
             const matchingStreets = (res.data as [{ roadType: string, streetName: string, street: string }])
                 .map((street) => {
                     return { value: street.street, label: street.street }
@@ -31,9 +35,9 @@ export function Search(props: { onChangedStreet: (street: string) => void }) {
         <>
             <AsyncSelect
                 cacheOptions
-                placeholder="Introduceti strada..."
+                placeholder="Introduceti minim 3 caractere pentru a cauta dupa strada..."
                 loadOptions={getStreets}
-                onChange={(event) => { handleSelect(event!.value) }} />
+                onChange={event => { handleSelect(event!.value) }} />
         </>
     )
 }

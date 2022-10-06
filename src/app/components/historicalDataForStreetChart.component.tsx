@@ -10,13 +10,34 @@ import {
 } from 'chart.js';
 import DataLabels from 'chartjs-plugin-datalabels'
 import { Bar } from 'react-chartjs-2';
+import axios from 'axios';
+import { subDays } from 'date-fns';
+import { AppConfig } from '../../../app.config';
 
-export function HistoricalDataForStreetChart(props: { labels: string[], issueCount: number[], noIssueCount: number[] }) {
-    const [labels, setLabels] = useState(props.labels);
-    const [data, setData] = useState({ issueCount: props.issueCount, noIssueCount: props.noIssueCount })
+export function HistoricalDataForStreetChart(props: { selectedStreet: string }) {
+    const selectedStreet = props.selectedStreet;
+    const [data, setData] = useState({ labels: [''], issueCount: [0], noIssueCount: [0] })
+
+    const getHistoricalDataForStreet = () => {
+        const daysAgo = 90;
+        const from = subDays(new Date(), daysAgo);
+        axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${selectedStreet}/all/${from}`).then((res) => {
+            const incomingData = (res.data as [{ block: string, issueCount: number, noIssueCount: number }]);
+            const data = {
+                labels: incomingData.map(item => { return item.block }),
+                issueCount: incomingData.map(item => { return item.issueCount }),
+                noIssueCount: incomingData.map(item => { return item.noIssueCount })
+            }
+
+
+            setData(data);
+        }).catch(err => {
+            console.log(err)
+        })
+    }
 
     const chartData = {
-        labels: labels,
+        labels: data.labels,
         datasets: [
             {
                 label: 'Zile cu avarii',
@@ -27,7 +48,7 @@ export function HistoricalDataForStreetChart(props: { labels: string[], issueCou
                 borderColor: 'red',
             },
             {
-                label: 'Zile fara avarii',
+                label: 'Functionare normala',
                 data: data.noIssueCount,
                 backgroundColor: '#95ccfc',
                 maxBarThickness: 20,
@@ -122,9 +143,10 @@ export function HistoricalDataForStreetChart(props: { labels: string[], issueCou
     };
 
     useEffect(() => {
-        setLabels(props.labels);
-        setData({ issueCount: props.issueCount, noIssueCount: props.noIssueCount });
-    }, [props]);
+        if (selectedStreet.length > 0) {
+            getHistoricalDataForStreet();
+        }
+    }, [selectedStreet]);
 
     return (
         <div>
