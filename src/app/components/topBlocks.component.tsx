@@ -11,10 +11,9 @@ import {
 import DataLabels from 'chartjs-plugin-datalabels'
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
+import { AppConfig } from '../../../app.config';
 
 export function TopBlocks() {
-    const ip = '192.168.0.174';
-    const port = '3005';
     const [data, setData] = useState({ labels: [''], issueCount: [0] })
 
     const chartData = {
@@ -79,7 +78,7 @@ export function TopBlocks() {
     }, [])
 
     const getData = () => {
-        axios.get(`http://${ip}:${port}/api/top/blocks/20`).then(res => {
+        axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/top/blocks/20`).then(res => {
             const results = res.data as [{ street: string, block: string, count: number }]
             const labels = results.map(item => `${item.street} bl. ${item.block}`)
             const issueCount = results.map(item => item.count)

@@ -4,10 +4,9 @@ import { HistoricalDataForStreetChart } from './components/historicalDataForStre
 import { Search } from './components/search.component';
 import { subDays } from 'date-fns'
 import { TopBlocks } from './components/topBlocks.component';
+import { AppConfig } from '../../app.config';
 
 export function App() {
-    const ip = '192.168.0.174';
-    const port = '3005';
     const [state, setState] = useState({
         selectedStreet: '',
         data: {
@@ -22,7 +21,7 @@ export function App() {
     const getHistoricalDataForStreet = () => {
         const daysAgo = 90;
         const from = subDays(new Date(), daysAgo);
-        axios.get(`http://${ip}:${port}/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
+        axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${state.selectedStreet}/all/${from}`).then((res) => {
             const incomingData = (res.data as [{ block: string, issueCount: number, noIssueCount: number }]);
             const newState = {
                 ...state,
@@ -42,7 +41,6 @@ export function App() {
     }
 
     useEffect(() => {
-        console.log(state);
     }, [state])
 
     const onChangedStreetCallback = (street: string) => {

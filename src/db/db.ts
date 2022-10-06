@@ -2,6 +2,7 @@ import { Issue } from "../service/data/Issue";
 import { IIssue, IssueModel } from "./schemas/issueSchema";
 import { startOfDay, endOfDay } from 'date-fns';
 import mongoose, { mongo } from "mongoose";
+import { AppConfig } from "../../app.config";
 
 class Database {
     constructor() {
@@ -9,7 +10,7 @@ class Database {
     }
 
     async connect() {
-        await mongoose.connect('mongodb://localhost:27017/icaldura')
+        await mongoose.connect(`mongodb://${AppConfig.mongoUri}:${AppConfig.mongoPort}/icaldura`)
             .then(() => {
                 console.log('--- DATABASE CONNECTED ---')
             })
