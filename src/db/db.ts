@@ -103,7 +103,7 @@ class Database {
      */
     async getChartDataWithIssueCounts(street: string, fromDate: Date, toDate: Date): Promise<[{ _id: string, block: string, issueCount: number, noIssueCount: number }] | void> {
         return IssueModel.aggregate([
-            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lte: toDate } }] } },
+            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lt: toDate } }] } },
             { $unwind: '$blocks' },
             { $group: { _id: '$blocks', dateAdded: { $addToSet: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } } } } },
             { $project: { block: '$_id', issueCount: { $size: '$dateAdded' }, noIssueCount: { $subtract: [{ $dateDiff: { startDate: fromDate, endDate: toDate, unit: 'day' } }, { $size: '$dateAdded' }] }, _id: false } },
