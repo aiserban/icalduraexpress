@@ -8,7 +8,7 @@ import { TopBlocksChart } from './components/topBlocksChart.component';
 export function App() {
     initChartDefaults();
 
-    const [selectedStreet, setSelectedStreet] = useState('');
+    const [selectedStreet, setSelectedStreet] = useState<string | null>('');
 
     return (
         <div>

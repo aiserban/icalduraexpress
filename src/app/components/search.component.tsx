@@ -5,19 +5,14 @@ import { AppConfig } from "../../../app.config";
 var unidecode = require('unidecode')
 
 
-export function Search(props: { onChangedStreet: (street: string) => void }) {
-    const [selectedOption, setSelectedOption] = useState({value: '', label: ''})
+export function Search(props: { onChangedStreet: (street: string | null) => void }) {
+    let selectedStreet = '';
 
     const handleSelect = (event: {value: string, label: string} | null) => {
         if (event !== null){
-            setSelectedOption({
-                value: event.value,
-                label: event.label
-            })
             props.onChangedStreet(event.value);
         } else {
-            setSelectedOption({value: '', label: ''});
-            props.onChangedStreet('');
+            props.onChangedStreet(null);
         }
     }
 
