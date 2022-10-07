@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import { subDays } from 'date-fns';
 import { AppConfig } from '../../../app.config';
 
 export function HistoricalDataForStreetChart(props: { selectedStreet: string }) {
-    const selectedStreet = props.selectedStreet;
+    let selectedStreet = props.selectedStreet;
     const [data, setData] = useState({ labels: [''], issueCount: [0], noIssueCount: [0] })
     const [hidden, setHidden] = useState(true);
     const daysAgo = 30;
@@ -96,6 +96,8 @@ export function HistoricalDataForStreetChart(props: { selectedStreet: string }) 
         if (selectedStreet.length > 0) {
             getHistoricalDataForStreet();
             setHidden(false);
+        } else {
+            setHidden(true);
         }
     }, [selectedStreet]);
 

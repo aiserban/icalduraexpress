@@ -6,11 +6,19 @@ var unidecode = require('unidecode')
 
 
 export function Search(props: { onChangedStreet: (street: string) => void }) {
-    let selectedStreet = '';
+    const [selectedOption, setSelectedOption] = useState({value: '', label: ''})
 
-    const handleSelect = (street: string) => {
-        selectedStreet = street;
-        props.onChangedStreet(street);
+    const handleSelect = (event: {value: string, label: string} | null) => {
+        if (event !== null){
+            setSelectedOption({
+                value: event.value,
+                label: event.label
+            })
+            props.onChangedStreet(event.value);
+        } else {
+            setSelectedOption({value: '', label: ''});
+            props.onChangedStreet('');
+        }
     }
 
     const getStreets = async (input: string): Promise<{ value: string, label: string }[]> => {
@@ -36,8 +44,9 @@ export function Search(props: { onChangedStreet: (street: string) => void }) {
             <AsyncSelect
                 cacheOptions
                 placeholder="Introduceti minim 3 caractere pentru a cauta dupa strada..."
+                isClearable={true}
                 loadOptions={getStreets}
-                onChange={event => { handleSelect(event!.value) }} />
+                onChange={event => { handleSelect(event) }} />
         </>
     )
 }
