@@ -7,6 +7,7 @@ import { AppConfig } from '../../../app.config';
 export function HistoricalDataForStreetChart(props: { selectedStreet: string }) {
     const selectedStreet = props.selectedStreet;
     const [data, setData] = useState({ labels: [''], issueCount: [0], noIssueCount: [0] })
+    const [hidden, setHidden] = useState(true);
     const daysAgo = 30;
 
     const getHistoricalDataForStreet = () => {
@@ -94,12 +95,15 @@ export function HistoricalDataForStreetChart(props: { selectedStreet: string }) 
     useEffect(() => {
         if (selectedStreet.length > 0) {
             getHistoricalDataForStreet();
+            setHidden(false);
         }
     }, [selectedStreet]);
 
     return (
-        <div>
-            <Bar data={chartData} options={options} />
+        <div hidden={hidden}>
+            <Bar
+                data={chartData}
+                options={options} />
         </div>
     )
 }
