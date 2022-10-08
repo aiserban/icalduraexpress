@@ -3,7 +3,7 @@ import { Bar } from 'react-chartjs-2';
 import axios from 'axios';
 import { AppConfig } from '../../../app.config';
 
-export function TopBlocksChart() {
+export function TopBlocksChart(props: { hidden: boolean}) {
     const [data, setData] = useState({ labels: [''], issueCount: [0] })
 
     const chartData = {
@@ -79,7 +79,7 @@ export function TopBlocksChart() {
     }
 
     return (
-        <div>
+        <div hidden={props.hidden}>
             <Bar data={chartData} options={options}></Bar>
         </div>
     )

@@ -11,13 +11,28 @@ export function App() {
 
     const [selectedStreet, setSelectedStreet] = useState<string | null>(null);
     const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
+    const [topBlocksHidden, setTopBlocksHidden] = useState(false);
+
+    const setTopChartsHidden = (value: boolean) => {
+        setTopBlocksHidden(value)
+    }
+
+    const onChangedStreet = (street: string | null) => {
+        setSelectedStreet(street);
+        setSelectedBlock(null);
+        if (street !== null) {
+            setTopChartsHidden(true)
+        } else {
+            setTopChartsHidden(false)
+        }
+    }
 
     return (
         <div>
-            <Search onChangedStreet={street => { setSelectedStreet(street); setSelectedBlock(null); }} />
-            <HistoricalDataForStreetChart street={selectedStreet} onClickedBlock={block => { setSelectedBlock(block)}} />
+            <TopBlocksChart hidden={topBlocksHidden} />
+            <Search onChangedStreet={onChangedStreet} />
+            <HistoricalDataForStreetChart street={selectedStreet} onClickedBlock={block => { setSelectedBlock(block) }} />
             <HistoricalDataForBlockChart street={selectedStreet} block={selectedBlock} />
-            <TopBlocksChart />
         </div>
     )
 }
