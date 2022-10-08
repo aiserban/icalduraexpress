@@ -67,8 +67,6 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
 
     useEffect(() => {
         if (selectedBlock !== null && selectedStreet !== null) {
-            console.log(selectedBlock)
-            console.log(selectedStreet)
             getData();
             setHidden(false);
         } else {

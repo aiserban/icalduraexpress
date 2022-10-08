@@ -102,7 +102,6 @@ class Database {
      * @returns
      */
     async getHistoricalDataForBlock(street: string, block: string, from: Date, limit: number = 30): Promise<{ dateAdded: Date, issueType: string }[] | void> {
-        console.log(street + ' ' + block + ' ' + from);
         return IssueModel.aggregate([
             { $match: { $and: [{ street: street }, { blocks: block }, { dateAdded: { $gte: from } }] } },
             { $project: { dateAdded: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } }, issueType: '$issueType' } },

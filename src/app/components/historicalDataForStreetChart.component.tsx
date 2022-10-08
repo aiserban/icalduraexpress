@@ -41,8 +41,6 @@ export function HistoricalDataForStreetChart(props: { street: string | null, onC
                 console.log(err);
             }
         }
-
-        // props.onClickedBlock(res)
     }
 
     const chartData = {
