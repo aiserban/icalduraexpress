@@ -79,7 +79,7 @@ export function TopBlocksChart(props: { hidden: boolean}) {
     }
 
     return (
-        <div hidden={props.hidden}>
+        <div id='topblocksChart' hidden={props.hidden}>
             <Bar data={chartData} options={options}></Bar>
         </div>
     )

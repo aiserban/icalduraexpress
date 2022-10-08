@@ -35,13 +35,13 @@ export function Search(props: { onChangedStreet: (street: string | null) => void
     }
 
     return (
-        <>
+        <div id='search'>
             <AsyncSelect
                 cacheOptions
                 placeholder="Introduceti minim 3 caractere pentru a cauta dupa strada..."
                 isClearable={true}
                 loadOptions={getStreets}
                 onChange={event => { handleSelect(event) }} />
-        </>
+        </div>
     )
 }

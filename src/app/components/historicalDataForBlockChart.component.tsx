@@ -12,9 +12,9 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
     let selectedBlock = props.block;
     const daysAgo = 30;
 
-    const getData = () => {
+    const getData = async () => {
         const from = subDays(new Date(), daysAgo);
-        axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${selectedStreet}/${selectedBlock}/${from}`).then(res => {
+        return axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${selectedStreet}/${selectedBlock}/${from}`).then(res => {
             const results = (res.data as [{ dateAdded: string, issueType: string }])
                 .map(item => { return { dateAdded: parseISO(item.dateAdded), issueType: item.issueType } });
 
@@ -67,8 +67,12 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
 
     useEffect(() => {
         if (selectedBlock !== null && selectedStreet !== null) {
-            getData();
             setHidden(false);
+            getData().then(() => {
+                document.getElementById('historicalDataForBlockChart')?.scrollIntoView({behavior: 'smooth'})
+            }).catch(err => {
+                console.log(err);
+            })
         } else {
             setHidden(true);
         }
@@ -156,7 +160,7 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
 
 
     return (
-        <div style={{ height: 250 }} hidden={hidden}>
+        <div id='historicalDataForBlockChart' style={{ height: 250 }} hidden={hidden}>
             <Bar data={chartData}
                 options={options} />
         </div>
