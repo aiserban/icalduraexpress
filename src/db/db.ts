@@ -95,6 +95,34 @@ class Database {
     }
 
     /**
+     * Get the list of issues per day for a particular block
+     * @param street
+     * @param block
+     * @param limit
+     * @returns
+     */
+    async getHistoricalDataForBlock(street: string, block: string, from: Date, limit: number = 30): Promise<{ dateAdded: Date, issueType: string }[] | void> {
+        console.log(street + ' ' + block + ' ' + from);
+        return IssueModel.aggregate([
+            { $match: { $and: [{ street: street }, { blocks: block }, { dateAdded: { $gte: from } }] } },
+            { $project: { dateAdded: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } }, issueType: '$issueType' } },
+            { $group: { _id: { dateAdded: '$dateAdded', issueType: '$issueType' } } },
+            { $project: { dateAdded: '$_id.dateAdded', issueType: '$_id.issueType', _id: 0 } },
+            { $sort: { dateAdded: -1 } },
+            { $limit: limit }
+        ]).then(results => {
+            if (results.length > 0) {
+                const mapped = results.map(item => {
+                    return ({ issueType: item.issueType, dateAdded: new Date(item.dateAdded) })
+                })
+                return mapped;
+            }
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+
+    /**
      * Chart data with all blocks and the number of issues they each had in the given interval
      * along with the days where no issue was reported
      * @param street
@@ -120,7 +148,7 @@ class Database {
      * Get the top ten blocks (including streets) with the most issues
      * @returns the street and block combination with the most issues recorded
      */
-    async getTopBlocks(limit: number): Promise<[{street: string, block: string, count: number}] | void> {
+    async getTopBlocks(limit: number): Promise<[{ street: string, block: string, count: number }] | void> {
         return IssueModel.aggregate([
             { $unwind: '$blocks' },
             { $group: { _id: { street: '$street', block: '$blocks' }, datesAdded: { $addToSet: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } } } } },
@@ -128,7 +156,7 @@ class Database {
             { $sort: { 'count': -1 } },
             { $limit: limit }
         ]).then(results => {
-            return results as [{street: string, block: string, count: number}]
+            return results as [{ street: string, block: string, count: number }]
         }).catch(err => {
             console.log(err)
         })

@@ -44,16 +44,23 @@ app.get('/api/issue/:street/:blocks/', async (req, res) => {
 
 app.get('/api/issue/:street/:blocks/:from', async (req, res) => {
   if (req.params.blocks === 'all') {
-    db.getChartDataWithIssueCounts(req.params.street, new Date(req.params.from), new Date()).then((results) => {
+    db.getChartDataWithIssueCounts(req.params.street, new Date(req.params.from), new Date()).then(results => {
       res.send(results);
     }).catch(err => {
       console.log(err)
     })
   } else {
-    res.sendStatus(404)
+    db.getHistoricalDataForBlock(req.params.street, req.params.blocks, new Date(req.params.from)).then(results => {
+      res.send(results);
+    }).catch(err => {
+      console.log(err)
+    })
   }
 })
 
+/**
+ * api/TOP/
+ */
 app.get('/api/top/blocks/:count', async (req, res) => {
   let limit = parseInt(req.params.count);
   if (limit === NaN) {
@@ -66,6 +73,8 @@ app.get('/api/top/blocks/:count', async (req, res) => {
     console.log(err)
   })
 })
+
+// todo top streets
 
 app.listen(port, () => {
   console.log(`iCaldura listening on port ${port}`)

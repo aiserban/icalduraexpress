@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
+import { Chart } from 'chart.js';
 import axios from 'axios';
 import { subDays } from 'date-fns';
 import { AppConfig } from '../../../app.config';
 
-export function HistoricalDataForStreetChart(props: { selectedStreet: string | null }) {
-    let selectedStreet = props.selectedStreet;
+export function HistoricalDataForStreetChart(props: { street: string | null, onClickedBlock: (street: string) => void }) {
+    let selectedStreet = props.street;
     const [data, setData] = useState({ labels: [''], issueCount: [0], noIssueCount: [0] })
     const [hidden, setHidden] = useState(true);
     const daysAgo = 30;
@@ -24,6 +25,24 @@ export function HistoricalDataForStreetChart(props: { selectedStreet: string | n
         }).catch(err => {
             console.log(err)
         })
+    }
+
+    const handleClick = (event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        const chart = Chart.getChart(event.currentTarget);
+
+        if (chart) {
+            const elem = chart.getElementsAtEventForMode(event.nativeEvent, 'nearest', { intersect: true }, true);
+            try {
+                const index = elem[0].index;
+                const clickedBlock = chartData.labels[index];
+                props.onClickedBlock(clickedBlock);
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+
+        // props.onClickedBlock(res)
     }
 
     const chartData = {
@@ -104,6 +123,7 @@ export function HistoricalDataForStreetChart(props: { selectedStreet: string | n
     return (
         <div hidden={hidden}>
             <Bar
+                onClick={event => handleClick(event)}
                 data={chartData}
                 options={options} />
         </div>
