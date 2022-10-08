@@ -34,7 +34,7 @@ export function TopBlocksChart() {
             },
             title: {
                 display: true,
-                text: 'Cele mai multe avarii',
+                text: 'Cladiri cu cele mai multe avarii',
             },
         },
         layout: {
@@ -44,7 +44,7 @@ export function TopBlocksChart() {
             x: {
 
                 title: {
-                    text: 'Strada si bloc',
+                    text: 'Strada - bloc/imobil',
                     display: true,
                     font: {
                         size: 14,
@@ -70,7 +70,7 @@ export function TopBlocksChart() {
     const getData = () => {
         axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/top/blocks/20`).then(res => {
             const results = res.data as [{ street: string, block: string, count: number }]
-            const labels = results.map(item => `${item.street} bl. ${item.block}`)
+            const labels = results.map(item => `${item.street} - ${item.block}`)
             const issueCount = results.map(item => item.count)
             setData({ labels: labels, issueCount: issueCount })
         }).catch(err => {
