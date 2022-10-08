@@ -6,6 +6,7 @@ import {
     Title,
     Tooltip,
     Legend,
+    ArcElement
 } from 'chart.js';
 import DataLabels from 'chartjs-plugin-datalabels'
 
@@ -34,6 +35,7 @@ export function initChartDefaults() {
         Legend,
         DataLabels,
         IncreaseLegendSpacing,
+        ArcElement
     );
 
     ChartJS.defaults.set('plugins.datalabels', {

@@ -27,7 +27,6 @@ export function HistoricalDataForBlockBar(props: { street: string | null, block:
             for (const day of interval) {
                 let isDeficiency = false;
                 let isShutdown = false;
-                let isFunctional = true;
 
                 for (const result of results) {
                     if (isSameDay(day, result.dateAdded) && result.issueType === 'Deficienta ACC') {
@@ -36,10 +35,6 @@ export function HistoricalDataForBlockBar(props: { street: string | null, block:
                     if (isSameDay(day, result.dateAdded) && result.issueType === 'Oprire ACC') {
                         isShutdown = true;
                     }
-                }
-
-                if (isDeficiency || isShutdown) {
-                    isFunctional = false;
                 }
 
                 if (isDeficiency && isShutdown) {
@@ -69,7 +64,7 @@ export function HistoricalDataForBlockBar(props: { street: string | null, block:
         if (selectedBlock !== null && selectedStreet !== null) {
             setHidden(false);
             getData().then(() => {
-                document.getElementById('historicalDataForBlockBar')?.scrollIntoView({behavior: 'smooth'})
+                // document.getElementById('historicalDataForBlockBar')?.scrollIntoView({behavior: 'smooth'})
             }).catch(err => {
                 console.log(err);
             })
@@ -127,6 +122,13 @@ export function HistoricalDataForBlockBar(props: { street: string | null, block:
             },
             datalabels: {
                 display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(ctx: any) {
+                        return ctx.dataset.label || ''
+                    }
+                }
             }
         },
         layout: {
@@ -142,14 +144,13 @@ export function HistoricalDataForBlockBar(props: { street: string | null, block:
                         size: 14,
                         weight: 'bold'
                     }
-                },
+                }
             },
             y: {
                 stacked: true,
                 max: 2,
                 ticks: {
                     display: false,
-                    // stepSize: 1,
                     font: {
                         weight: 'normal'
                     }

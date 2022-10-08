@@ -4,7 +4,6 @@ import { Chart } from 'chart.js';
 import axios from 'axios';
 import { subDays } from 'date-fns';
 import { AppConfig } from '../../../app.config';
-import { scrollIntoView } from 'react-select/dist/declarations/src/utils';
 
 export function HistoricalDataForStreetBar(props: { street: string | null, onClickedBlock: (street: string) => void }) {
     let selectedStreet = props.street;
