@@ -6,7 +6,7 @@ import { subDays } from 'date-fns';
 import { AppConfig } from '../../../app.config';
 import { scrollIntoView } from 'react-select/dist/declarations/src/utils';
 
-export function HistoricalDataForStreetChart(props: { street: string | null, onClickedBlock: (street: string) => void }) {
+export function HistoricalDataForStreetBar(props: { street: string | null, onClickedBlock: (street: string) => void }) {
     let selectedStreet = props.street;
     const [data, setData] = useState({ labels: [''], issueCount: [0], noIssueCount: [0] })
     const [hidden, setHidden] = useState(true);
@@ -120,7 +120,7 @@ export function HistoricalDataForStreetChart(props: { street: string | null, onC
     }, [selectedStreet]);
 
     return (
-        <div id='historicalDataForStreetChart' hidden={hidden}>
+        <div id='historicalDataForStreetBar' hidden={hidden}>
             <Bar
                 onClick={event => handleClick(event)}
                 data={chartData}

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { initChartDefaults } from './chartDefaults';
-import { HistoricalDataForBlockChart } from './components/historicalDataForBlockChart.component';
-import { HistoricalDataForStreetChart } from './components/historicalDataForStreetChart.component';
+import { HistoricalDataForBlockBar } from './components/historicalDataForBlockBar.component';
+import { HistoricalDataForStreetBar } from './components/historicalDataForStreetBar.component';
 import { Search } from './components/search.component';
-import { TopBlocksChart } from './components/topBlocksChart.component';
+import { TopBlocksBar } from './components/topBlocksBar.component';
 
 
 export function App() {
@@ -29,10 +29,10 @@ export function App() {
 
     return (
         <div>
-            <TopBlocksChart hidden={topBlocksHidden} />
+            <TopBlocksBar hidden={topBlocksHidden} />
             <Search onChangedStreet={onChangedStreet} />
-            <HistoricalDataForStreetChart street={selectedStreet} onClickedBlock={block => { setSelectedBlock(block) }} />
-            <HistoricalDataForBlockChart street={selectedStreet} block={selectedBlock} />
+            <HistoricalDataForStreetBar street={selectedStreet} onClickedBlock={block => { setSelectedBlock(block) }} />
+            <HistoricalDataForBlockBar street={selectedStreet} block={selectedBlock} />
         </div>
     )
 }

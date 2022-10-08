@@ -5,7 +5,7 @@ import { AppConfig } from '../../../app.config';
 import { subDays, eachDayOfInterval, parseISO, format } from 'date-fns';
 import { isSameDay } from 'date-fns/esm';
 
-export function HistoricalDataForBlockChart(props: { street: string | null, block: string | null }) {
+export function HistoricalDataForBlockBar(props: { street: string | null, block: string | null }) {
     const [data, setData] = useState<{ labels: string[], deficiencies: number[], shutdowns: number[], functioning: number[] }>();
     const [hidden, setHidden] = useState(true);
     let selectedStreet = props.street;
@@ -69,7 +69,7 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
         if (selectedBlock !== null && selectedStreet !== null) {
             setHidden(false);
             getData().then(() => {
-                document.getElementById('historicalDataForBlockChart')?.scrollIntoView({behavior: 'smooth'})
+                document.getElementById('historicalDataForBlockBar')?.scrollIntoView({behavior: 'smooth'})
             }).catch(err => {
                 console.log(err);
             })
@@ -160,7 +160,7 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
 
 
     return (
-        <div id='historicalDataForBlockChart' style={{ height: 250 }} hidden={hidden}>
+        <div id='historicalDataForBlockBar' style={{ height: 250 }} hidden={hidden}>
             <Bar data={chartData}
                 options={options} />
         </div>
