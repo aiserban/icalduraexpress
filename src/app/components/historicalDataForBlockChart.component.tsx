@@ -6,7 +6,7 @@ import { subDays, eachDayOfInterval, parseISO, format } from 'date-fns';
 import { isSameDay } from 'date-fns/esm';
 
 export function HistoricalDataForBlockChart(props: { street: string | null, block: string | null }) {
-    const [data, setData] = useState<{ labels: string[], deficiencies: number[], shutdowns: number[], functionals: number[] }>();
+    const [data, setData] = useState<{ labels: string[], deficiencies: number[], shutdowns: number[], functioning: number[] }>();
     const [hidden, setHidden] = useState(true);
     let selectedStreet = props.street;
     let selectedBlock = props.block;
@@ -22,7 +22,7 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
             const labels = interval.map(day => format(day, 'dd-MM-yyyy'));
             const deficiencies: number[] = []
             const shutdowns: number[] = []
-            const functionals: number[] = []
+            const functioning: number[] = []
 
             for (const day of interval) {
                 let isDeficiency = false;
@@ -42,12 +42,26 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
                     isFunctional = false;
                 }
 
-                deficiencies.push(isDeficiency ? 1 : 0);
-                shutdowns.push(isShutdown ? 1 : 0);
-                functionals.push(isFunctional ? 1 : 0);
+                if (isDeficiency && isShutdown) {
+                    deficiencies.push(1);
+                    shutdowns.push(1);
+                    functioning.push(0)
+                } else if (isDeficiency && !isShutdown){
+                    deficiencies.push(2);
+                    shutdowns.push(0);
+                    functioning.push(0)
+                } else if (!isDeficiency && isShutdown) {
+                    deficiencies.push(0);
+                    shutdowns.push(2);
+                    functioning.push(0)
+                } else {
+                    deficiencies.push(0);
+                    shutdowns.push(0);
+                    functioning.push(2);
+                }
             }
 
-            setData({ labels: labels, deficiencies: deficiencies, shutdowns: shutdowns, functionals: functionals });
+            setData({ labels: labels, deficiencies: deficiencies, shutdowns: shutdowns, functioning: functioning });
         })
     }
 
@@ -67,19 +81,11 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
         datasets: [
             {
                 label: 'Functionare normala',
-                data: data?.functionals,
+                data: data?.functioning,
                 backgroundColor: '#95ccfc',
                 maxBarThickness: 20,
                 borderWidth: 1,
                 borderColor: 'blue',
-            },
-            {
-                label: 'Deficienta ACC',
-                data: data?.deficiencies,
-                backgroundColor: '#f7d46a',
-                maxBarThickness: 20,
-                borderWidth: 1,
-                borderColor: 'orange',
             },
             {
                 label: 'Oprire ACC',
@@ -88,6 +94,14 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
                 maxBarThickness: 20,
                 borderWidth: 1,
                 borderColor: 'red',
+            },
+            {
+                label: 'Deficienta ACC',
+                data: data?.deficiencies,
+                backgroundColor: '#f7d46a',
+                maxBarThickness: 20,
+                borderWidth: 1,
+                borderColor: 'orange',
             },
         ],
     }
@@ -118,7 +132,7 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
         },
         scales: {
             x: {
-
+                stacked: true,
                 title: {
                     text: 'Data',
                     display: true,
@@ -129,9 +143,11 @@ export function HistoricalDataForBlockChart(props: { street: string | null, bloc
                 },
             },
             y: {
-                max: 1,
+                stacked: true,
+                max: 2,
                 ticks: {
-                    stepSize: 1,
+                    display: false,
+                    // stepSize: 1,
                     font: {
                         weight: 'normal'
                     }
