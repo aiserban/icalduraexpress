@@ -5,9 +5,10 @@
   "main": "server.ts",
   "live": "nodemon server.ts",
   "scripts": {
-    "live": "nodemon server.ts",
-    "watch": "webpack --watch",
+    "server": "nodemon server.ts",
     "service": "nodemon appService.ts",
+    "watch": "webpack --watch",
+    "mongo": "brew services start mongodb-community",
     "webpack": "webpack",
     "build": "babel src/app -d build --extensions .ts,.tsx",
     "test": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' mocha -r ts-node/register 'test/*.ts'"
