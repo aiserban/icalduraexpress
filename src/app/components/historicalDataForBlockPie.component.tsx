@@ -36,7 +36,6 @@ export function HistoricalDataForBlockPie(props: { street: string | null, block:
                     functioning += 1;
                 }
             }
-            console.log(functioning);
 
             setData({ labels: ['Avarii', 'Functionare normala'], issues: issues, functioning: functioning });
         })
@@ -46,7 +45,6 @@ export function HistoricalDataForBlockPie(props: { street: string | null, block:
         if (selectedBlock !== null && selectedStreet !== null) {
             setHidden(false);
             getData().then(() => {
-                console.log(data)
                 document.getElementById('historicalDataForBlockPie')?.scrollIntoView({ behavior: 'smooth', block: 'end' });
             })
         } else {
