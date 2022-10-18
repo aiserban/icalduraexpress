@@ -24,15 +24,19 @@ export function HistoricalDataForBlockPie(props: { street: string | null, block:
             let functioning = 0;
 
             for (const day of interval) {
+                let issueAdded = false;
                 for (const result of results) {
                     if (isSameDay(day, result.dateAdded) && (result.issueType === 'Deficienta ACC' || result.issueType === 'Oprire ACC')) {
                         issues += 1;
-                    }
-                    else {
-                        functioning += 1;
+                        issueAdded = true;
                     }
                 }
+
+                if (!issueAdded) {
+                    functioning += 1;
+                }
             }
+            console.log(functioning);
 
             setData({ labels: ['Avarii', 'Functionare normala'], issues: issues, functioning: functioning });
         })
@@ -42,6 +46,7 @@ export function HistoricalDataForBlockPie(props: { street: string | null, block:
         if (selectedBlock !== null && selectedStreet !== null) {
             setHidden(false);
             getData().then(() => {
+                console.log(data)
                 document.getElementById('historicalDataForBlockPie')?.scrollIntoView({ behavior: 'smooth', block: 'end' });
             })
         } else {
