@@ -64,14 +64,6 @@ class Database {
         });
     }
 
-    async findDistinct(field: string, query: {}): Promise<string[] | void> {
-        return IssueModel.distinct(field, query).then(results => {
-            return results;
-        }).catch(err => {
-            console.log(err)
-        })
-    }
-
     /**
      * Chart data with a list of blocks,
      * each block having an array of days where an issue was registered
@@ -131,7 +123,7 @@ class Database {
      */
     async getChartDataWithIssueCounts(street: string, fromDate: Date, toDate: Date): Promise<[{ _id: string, block: string, issueCount: number, noIssueCount: number }] | void> {
         return IssueModel.aggregate([
-            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lt: toDate } }] } },
+            { $match: { $and: [{ street: street }, { dateAdded: { $gte: fromDate } }, { dateAdded: { $lte: toDate } }] } },
             { $unwind: '$blocks' },
             { $group: { _id: '$blocks', dateAdded: { $addToSet: { $dateToString: { format: '%Y-%m-%d', date: '$dateAdded' } } } } },
             { $project: { block: '$_id', issueCount: { $size: '$dateAdded' }, noIssueCount: { $subtract: [{ $dateDiff: { startDate: fromDate, endDate: toDate, unit: 'day' } }, { $size: '$dateAdded' }] }, _id: false } },

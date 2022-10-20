@@ -28,20 +28,6 @@ app.get('/api/issue/:street/', async (req, res) => {
   })
 })
 
-app.get('/api/issue/:street/:blocks/', async (req, res) => {
-  if (req.params.blocks === 'all') {
-    const query = { street: req.params.street };
-
-    db.findDistinct('blocks', query).then((results) => {
-      res.send(results);
-    }).catch((err) => {
-      console.log(err);
-    })
-  } else {
-    res.sendStatus(404)
-  }
-})
-
 app.get('/api/issue/:street/:blocks/:from', async (req, res) => {
   if (req.params.blocks === 'all') {
     db.getChartDataWithIssueCounts(req.params.street, new Date(req.params.from), new Date()).then(results => {

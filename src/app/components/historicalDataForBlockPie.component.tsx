@@ -13,7 +13,7 @@ export function HistoricalDataForBlockPie(props: { street: string | null, block:
     const daysAgo = 30;
 
     const getData = async () => {
-        const from = subDays(new Date(), daysAgo);
+        const from = subDays(new Date(), daysAgo - 1);
         return axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${selectedStreet}/${selectedBlock}/${from}`).then(res => {
             const results = (res.data as [{ dateAdded: string, issueType: string }])
                 .map(item => { return { dateAdded: parseISO(item.dateAdded), issueType: item.issueType } });
