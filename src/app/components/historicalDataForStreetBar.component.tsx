@@ -5,10 +5,10 @@ import axios from 'axios';
 import { subDays } from 'date-fns';
 import { AppConfig } from '../../../app.config';
 
-export function HistoricalDataForStreetBar(props: { street: string | null, onClickedBlock: (street: string) => void }) {
+export function HistoricalDataForStreetBar(props: { street: string | null, onClickedBlock: (street: string) => void, hidden: boolean }) {
     let selectedStreet = props.street;
     const [data, setData] = useState({ labels: [''], issueCount: [0], noIssueCount: [0] })
-    const [hidden, setHidden] = useState(true);
+    const [hidden, setHidden] = useState(props.hidden);
     const daysAgo = 30;
 
     const getHistoricalDataForStreet = () => {
@@ -35,7 +35,7 @@ export function HistoricalDataForStreetBar(props: { street: string | null, onCli
             try {
                 const index = elem[0].index;
                 const clickedBlock = chartData.labels[index];
-                props.onClickedBlock(clickedBlock);
+                props.onClickedBlock(encodeURIComponent(clickedBlock));
             }
             catch (err) {
                 console.log(err);
@@ -112,11 +112,11 @@ export function HistoricalDataForStreetBar(props: { street: string | null, onCli
     useEffect(() => {
         if (selectedStreet !== null && selectedStreet.length > 0) {
             getHistoricalDataForStreet();
-            setHidden(false);
+            setHidden(props.hidden);
         } else {
-            setHidden(true);
+            setHidden(props.hidden);
         }
-    }, [selectedStreet]);
+    }, [selectedStreet, props.hidden]);
 
     return (
         <div id='historicalDataForStreetBar' hidden={hidden}>

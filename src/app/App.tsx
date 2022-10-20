@@ -14,6 +14,7 @@ export function App() {
     const [selectedStreet, setSelectedStreet] = useState<string | null>(null);
     const [selectedBlock, setSelectedBlock] = useState<string | null>(null);
     const [topBlocksHidden, setTopBlocksHidden] = useState(false);
+    const [historicalDataForStreetHidden, sethistoricalDataForStreetHidden] = useState(true);
 
     const setTopChartsHidden = (value: boolean) => {
         setTopBlocksHidden(value)
@@ -24,6 +25,7 @@ export function App() {
         setSelectedBlock(null);
         if (street !== null) {
             setTopChartsHidden(true)
+            sethistoricalDataForStreetHidden(false);
         } else {
             setTopChartsHidden(false)
         }
@@ -31,9 +33,13 @@ export function App() {
 
     return (
         <div>
-            <TopBlocksBar hidden={topBlocksHidden} />
+            <TopBlocksBar hidden={topBlocksHidden}
+                onClicked={(street, block) => {setSelectedStreet(street); setSelectedBlock(block); sethistoricalDataForStreetHidden(true)}}/>
             <Search onChangedStreet={onChangedStreet} />
-            <HistoricalDataForStreetBar street={selectedStreet} onClickedBlock={block => { setSelectedBlock(block) }} />
+            <HistoricalDataForStreetBar
+                hidden={historicalDataForStreetHidden}
+                street={selectedStreet}
+                onClickedBlock={block => { setSelectedBlock(block) }} />
             <HistoricalDataForBlockSection street={selectedStreet} block={selectedBlock} />
         </div>
     )
