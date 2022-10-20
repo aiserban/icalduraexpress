@@ -5,73 +5,8 @@ import { AppConfig } from '../../../app.config';
 import { subDays, eachDayOfInterval, parseISO, format } from 'date-fns';
 import { isSameDay } from 'date-fns/esm';
 
-export function HistoricalDataForBlockBar(props: { street: string | null, block: string | null }) {
-    const [data, setData] = useState<{ labels: string[], deficiencies: number[], shutdowns: number[], functioning: number[] }>();
-    const [hidden, setHidden] = useState(true);
-    let selectedStreet = props.street;
-    let selectedBlock = props.block;
-    const daysAgo = 30;
-
-    const getData = async () => {
-        const from = subDays(new Date(), daysAgo - 1);
-        return axios.get(`http://${AppConfig.uri}:${AppConfig.port}/api/issue/${selectedStreet}/${selectedBlock}/${from}`).then(res => {
-            const results = (res.data as [{ dateAdded: string, issueType: string }])
-                .map(item => { return { dateAdded: parseISO(item.dateAdded), issueType: item.issueType } });
-
-            const interval = eachDayOfInterval({ start: from, end: new Date() });
-            const labels = interval.map(day => format(day, 'dd-MM-yyyy'));
-            const deficiencies: number[] = []
-            const shutdowns: number[] = []
-            const functioning: number[] = []
-
-            for (const day of interval) {
-                let isDeficiency = false;
-                let isShutdown = false;
-
-                for (const result of results) {
-                    if (isSameDay(day, result.dateAdded) && result.issueType === 'Deficienta ACC') {
-                        isDeficiency = true;
-                    }
-                    if (isSameDay(day, result.dateAdded) && result.issueType === 'Oprire ACC') {
-                        isShutdown = true;
-                    }
-                }
-
-                if (isDeficiency && isShutdown) {
-                    deficiencies.push(1);
-                    shutdowns.push(1);
-                    functioning.push(0)
-                } else if (isDeficiency && !isShutdown){
-                    deficiencies.push(2);
-                    shutdowns.push(0);
-                    functioning.push(0)
-                } else if (!isDeficiency && isShutdown) {
-                    deficiencies.push(0);
-                    shutdowns.push(2);
-                    functioning.push(0)
-                } else {
-                    deficiencies.push(0);
-                    shutdowns.push(0);
-                    functioning.push(2);
-                }
-            }
-
-            setData({ labels: labels, deficiencies: deficiencies, shutdowns: shutdowns, functioning: functioning });
-        })
-    }
-
-    useEffect(() => {
-        if (selectedBlock !== null && selectedStreet !== null) {
-            setHidden(false);
-            getData().then(() => {
-                // document.getElementById('historicalDataForBlockBar')?.scrollIntoView({behavior: 'smooth'})
-            }).catch(err => {
-                console.log(err);
-            })
-        } else {
-            setHidden(true);
-        }
-    }, [selectedStreet, selectedBlock])
+export function HistoricalDataForBlockBar(props: { labels: string[] | undefined, deficiencies: number[] | undefined, shutdowns: number[] | undefined, functioning: number[] | undefined }) {
+    const data = props;
 
     const chartData = {
         labels: data?.labels,
@@ -118,7 +53,7 @@ export function HistoricalDataForBlockBar(props: { street: string | null, block:
             },
             title: {
                 display: true,
-                text: `Functionare in ultimele ${daysAgo} zile`,
+                text: 'Functionare in ultimele zile',
             },
             datalabels: {
                 display: false
@@ -161,7 +96,7 @@ export function HistoricalDataForBlockBar(props: { street: string | null, block:
 
 
     return (
-        <div id='historicalDataForBlockBar' style={{ height: 250 }} hidden={hidden}>
+        <div id='historicalDataForBlockBar' style={{ height: 250 }}>
             <Bar data={chartData}
                 options={options} />
         </div>

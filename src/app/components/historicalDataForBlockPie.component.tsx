@@ -7,7 +7,6 @@ import { AppConfig } from '../../../app.config';
 
 export function HistoricalDataForBlockPie(props: { labels: string[] | undefined, issueCount: number | undefined, functioningCount: number | undefined}) {
     const data = props;
-    const daysAgo = 30;
 
     const chartData = {
         labels: data.labels,
@@ -37,7 +36,7 @@ export function HistoricalDataForBlockPie(props: { labels: string[] | undefined,
             },
             title: {
                 display: true,
-                text: `Status in ultimele ${daysAgo} zile`
+                text: 'Status in ultimele zile'
             },
             datalabels: {
                 display: true,

@@ -35,8 +35,6 @@ export function App() {
             <Search onChangedStreet={onChangedStreet} />
             <HistoricalDataForStreetBar street={selectedStreet} onClickedBlock={block => { setSelectedBlock(block) }} />
             <HistoricalDataForBlockSection street={selectedStreet} block={selectedBlock} />
-            {/* <HistoricalDataForBlockPie street={selectedStreet} block={selectedBlock} /> */}
-            <HistoricalDataForBlockBar street={selectedStreet} block={selectedBlock} />
         </div>
     )
 }
