@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { initChartDefaults } from './chartDefaults';
 import { HistoricalDataForBlockBar } from './components/historicalDataForBlockBar.component';
 import { HistoricalDataForBlockPie } from './components/historicalDataForBlockPie.component';
+import { HistoricalDataForBlockSection } from './components/historicalDataForBlockSection.component';
 import { HistoricalDataForStreetBar } from './components/historicalDataForStreetBar.component';
 import { Search } from './components/search.component';
 import { TopBlocksBar } from './components/topBlocksBar.component';
@@ -33,7 +34,8 @@ export function App() {
             <TopBlocksBar hidden={topBlocksHidden} />
             <Search onChangedStreet={onChangedStreet} />
             <HistoricalDataForStreetBar street={selectedStreet} onClickedBlock={block => { setSelectedBlock(block) }} />
-            <HistoricalDataForBlockPie street={selectedStreet} block={selectedBlock} />
+            <HistoricalDataForBlockSection street={selectedStreet} block={selectedBlock} />
+            {/* <HistoricalDataForBlockPie street={selectedStreet} block={selectedBlock} /> */}
             <HistoricalDataForBlockBar street={selectedStreet} block={selectedBlock} />
         </div>
     )
